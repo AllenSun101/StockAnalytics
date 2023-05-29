@@ -4,7 +4,6 @@ import numpy as np
 
 spreadsheet = pd.read_excel("Considered_Stocks.xlsx", sheet_name="Stocks")
 
-
 def insert_tickers(tickers: list[list[str, str]]) -> None:
     pass
 
@@ -42,3 +41,10 @@ def find_duplicates() -> list[list[str, list[str]]]:
 def find_sector(ticker: str) -> str:
     pass
 
+
+def detect_price_data_anomalies():
+    pass
+
+
+def remove_anomalies():
+    pass

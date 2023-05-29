@@ -1,0 +1,2 @@
+# StockAnalytics
+Personal project.
