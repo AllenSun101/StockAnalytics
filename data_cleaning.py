@@ -41,3 +41,10 @@ def find_duplicates() -> list[list[str, list[str]]]:
 def find_sector(ticker: str) -> str:
     pass
 
+
+def detect_price_data_anomalies():
+    pass
+
+
+def remove_anomalies():
+    pass
