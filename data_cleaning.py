@@ -42,9 +42,10 @@ def find_sector(ticker: str) -> str:
     pass
 
 
-def detect_price_data_anomalies():
+def check_spreadsheet_formatting():
+    # Spaces of spreadsheet
     pass
 
-
-def remove_anomalies():
+def verify_tickers():
+    # Find tickers that do not exist anymore, tickers with incomplete data (need handling)
     pass
