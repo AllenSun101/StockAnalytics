@@ -105,6 +105,8 @@ def aggregate_percentage_growth(dates, sectors, spreadsheet, start, end):
                     continue
                 percentage_increase[i] += (closes[i] - closes[i-50]) / closes[i]
                 
+            break
+
         # convert to percentage
         for i in range(len(dates)):
             percentage_increase[i] = round(percentage_increase[i] * 100 / len(tickers), 2)
