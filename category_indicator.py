@@ -30,7 +30,7 @@ def update_indicators():
     aggregate_percentage_growth(dates, sectors, spreadsheet, start, end)
 
 def get_indicators():
-    pass
+    return "HELLO"
 
 def uptrend(dates, sectors, spreadsheet, start, end):
     data = {}
@@ -168,5 +168,5 @@ def clean_database():
     pass
 
 
-update_indicators()
+# update_indicators()
 

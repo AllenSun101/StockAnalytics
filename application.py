@@ -3,10 +3,10 @@ import category_indicator
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/category_indicators')
 def display_indicators():
     # Styling and chart integration
-    category_indicator.update_indicators()
+    return category_indicator.get_indicators()
 
 if __name__ == '__main__':
    app.run(debug = True)
