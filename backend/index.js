@@ -1,8 +1,11 @@
 const express = require("express");
+const cors = require('cors');
 
 const PORT = process.env.PORT || 3001
 
 const app = express()
+
+app.use(cors());
 
 // var mysql = require("mysql2");
 
@@ -25,6 +28,7 @@ app.get("/api", (req, res) => {
 
 
 app.get("/database", (req, res) => {
+    console.log("Working");
     res.json({message: "Connect to database"});
 });
 
