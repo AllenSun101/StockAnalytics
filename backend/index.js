@@ -1,4 +1,6 @@
 const express = require("express");
+const request = require('request');
+
 const cors = require('cors');
 
 const PORT = process.env.PORT || 3001
@@ -17,7 +19,8 @@ app.use(express.json());
 app.get("/api", (req, res) => {
     // Flask Connection Test- NEEDS TESTING AND FIXING
     // May need to move files to backend directory
-    res.json({message: "Hello, world"});
+    // res.json({message: "Hello, world"});
+    // Maybe uninstall requests and convert to axios
     request('http://127.0.0.1:5000/category_indicators', function (error, response, body) {
         console.error('error:', error); // Print the error
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received

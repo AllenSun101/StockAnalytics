@@ -7,7 +7,7 @@ export default function Home(){
     const [test, setTest] = React.useState("Hello");
 
     React.useEffect(() => {
-        axios.get('http://localhost:3001/database')
+        axios.get('http://localhost:3001/api')
         .then(
             response => {
                 setTest(response.data);
@@ -16,6 +16,6 @@ export default function Home(){
     }, []);
     
     return(
-        <h1>{test.message}</h1>
+        <h1>{test}</h1>
     )
 }

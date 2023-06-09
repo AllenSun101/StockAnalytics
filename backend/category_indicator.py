@@ -30,7 +30,7 @@ def update_indicators():
     aggregate_percentage_growth(dates, sectors, spreadsheet, start, end)
 
 def get_indicators():
-    return "HELLO"
+    return "Flask Connected!"
 
 def uptrend(dates, sectors, spreadsheet, start, end):
     data = {}
