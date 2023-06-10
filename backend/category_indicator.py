@@ -1,6 +1,6 @@
 import datetime
 import plotly.graph_objects as go
-
+import plotly
 import pandas as pd
 from yahoofinancials import YahooFinancials
 import numpy as np
@@ -27,7 +27,7 @@ def update_indicators():
     # Call indicator calculations
     #uptrend(dates, sectors, spreadsheet, start, end)
     #price_growth(dates, sectors, spreadsheet, start, end)
-    aggregate_percentage_growth(dates, sectors, spreadsheet, start, end)
+    return aggregate_percentage_growth(dates, sectors, spreadsheet, start, end)
 
 def get_indicators():
     return "Flask Connected!"
@@ -104,7 +104,8 @@ def aggregate_percentage_growth(dates, sectors, spreadsheet, start, end):
                 if i-1 < 50:
                     continue
                 percentage_increase[i] += (closes[i] - closes[i-50]) / closes[i]
-                
+            
+            # REMOVE 
             break
 
         # convert to percentage
@@ -117,7 +118,8 @@ def aggregate_percentage_growth(dates, sectors, spreadsheet, start, end):
     for sector in data:
         fig.add_trace(go.Scatter(x=dates, y=data[sector], name=sector))
 
-    fig.show()
+    fig_JSON = plotly.io.to_json(fig, pretty=True)
+    return fig_JSON
 
 def price_growth(dates, sectors, spreadsheet, start, end):
     data = {}
