@@ -6,10 +6,10 @@ from yahoofinancials import YahooFinancials
 import numpy as np
 
 
-def update_indicators():
-    # Open spreadsheet, read, separate into categories
+def update_indicators() -> None:
 
     spreadsheet = pd.read_excel("Considered_Stocks.xlsx", sheet_name="Stocks")
+
     sectors = ["Information Technology", "Communication Services", "Consumer Discretionary",
            "Consumer Staples", "Finance", "Healthcare", "Industrials", "Energy", "Materials",
            "Utilities", "Real Estate"]
@@ -25,12 +25,14 @@ def update_indicators():
     dates = [days['formatted_date'] for days in market_data]
 
     # Call indicator calculations
-    #uptrend(dates, sectors, spreadsheet, start, end)
-    #price_growth(dates, sectors, spreadsheet, start, end)
-    return aggregate_percentage_growth(dates, sectors, spreadsheet, start, end)
+    uptrend(dates, sectors, spreadsheet, start, end)
+    price_growth(dates, sectors, spreadsheet, start, end)
+    aggregate_percentage_growth(dates, sectors, spreadsheet, start, end)
+
 
 def get_indicators():
     return "Flask Connected!"
+
 
 def uptrend(dates, sectors, spreadsheet, start, end):
     data = {}
@@ -104,9 +106,6 @@ def aggregate_percentage_growth(dates, sectors, spreadsheet, start, end):
                 if i-1 < 50:
                     continue
                 percentage_increase[i] += (closes[i] - closes[i-50]) / closes[i]
-            
-            # REMOVE 
-            break
 
         # convert to percentage
         for i in range(len(dates)):
@@ -120,6 +119,7 @@ def aggregate_percentage_growth(dates, sectors, spreadsheet, start, end):
 
     fig_JSON = plotly.io.to_json(fig, pretty=True)
     return fig_JSON
+
 
 def price_growth(dates, sectors, spreadsheet, start, end):
     data = {}

@@ -46,6 +46,7 @@ def check_spreadsheet_formatting():
     # Spaces of spreadsheet
     pass
 
+
 def verify_tickers():
     # Find tickers that do not exist anymore, tickers with incomplete data (need handling)
     pass

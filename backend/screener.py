@@ -1,23 +1,18 @@
 import datetime
-from datetime import date
 
 import pandas as pd
 from yahoofinancials import YahooFinancials
 import numpy as np
 
 
-def run_screener():
-    # Get Inputs and Set Time parameters
-    days_back = 235
-    days_backtesting = 0
-    start = str(datetime.date.today() - datetime.timedelta(days=days_back))
-    end = str(datetime.date.today() - datetime.timedelta(days=days_backtesting))
+def run_screener() -> None:
 
     spreadsheet = pd.read_excel("Considered_Stocks.xlsx", sheet_name="Stocks")
 
     sectors = ["Information Technology", "Communication Services", "Consumer Discretionary",
             "Consumer Staples", "Finance", "Healthcare", "Industrials", "Energy", "Real Estate"]
 
+    # run screener functions
     momentum = strong_momentum(spreadsheet, sectors)
     uptrend = strong_uptrend(spreadsheet, sectors)
 
@@ -26,13 +21,14 @@ def run_screener():
 
 
 # strong price growth
-def strong_momentum(spreadsheet, sectors):
+def strong_momentum(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
     momentum_stocks = []
 
     for sector in sectors:
         tickers = spreadsheet[sector].dropna()
 
         for ticker in tickers:
+
             print(ticker)
             stock = YahooFinancials(ticker)
 
@@ -46,12 +42,15 @@ def strong_momentum(spreadsheet, sectors):
             highs = [round(day['high'], 2) for day in prices]     
             lows = [round(day['low'], 2) for day in prices]   
             
+            # create pandas dataframe for processing
             df = pd.DataFrame()
             df['Highs'] = highs
             df['Lows'] = lows
             df['Closes'] = closes
+
             atr = average_true_range(df)
             
+            # check if close is at least 2 ATRs above lowest point in last ten days 
             for i in range(2, 12):
                 if closes[-1] - closes[-i] > atr.iloc[-i] * 2:
                     momentum_stocks.append(ticker)
@@ -61,13 +60,14 @@ def strong_momentum(spreadsheet, sectors):
 
 
 # strong positive trend
-def strong_uptrend(spreadsheet, sectors):
+def strong_uptrend(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
     uptrend_stocks = []
 
     for sector in sectors:
         tickers = spreadsheet[sector].dropna()
 
         for ticker in tickers:
+
             print(ticker)
             stock = YahooFinancials(ticker)
 
@@ -79,10 +79,12 @@ def strong_uptrend(spreadsheet, sectors):
 
             closes = [round(day['close'], 2) for day in prices]
 
+            # Dataframe of exponential moving averages
             ema = pd.DataFrame()
             ema["Closes"] = closes
             ema["50 EMA"] = round(ema["Closes"].ewm(span=50).mean(), 2)
 
+            # check if 50 day ema increases in seven of last ten days
             uptrend_points = 0
             for i in range(-10, 0, 1):
                 if ema["50 EMA"].iloc[i] > ema["50 EMA"].iloc[i - 1]:
@@ -94,7 +96,7 @@ def strong_uptrend(spreadsheet, sectors):
     return uptrend_stocks
 
 
-def average_true_range(dataframe):
+def average_true_range(dataframe: pd.DataFrame) -> pd.DataFrame:
     high_low = dataframe['Highs'] - dataframe['Lows']
     high_close = np.abs(dataframe['Highs'] - dataframe['Closes'].shift())
     low_close = np.abs(dataframe['Lows'] - dataframe['Closes'].shift())
@@ -105,4 +107,4 @@ def average_true_range(dataframe):
     return atr
 
 
-run_screener()
+# run_screener()
