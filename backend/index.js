@@ -9,11 +9,13 @@ const app = express()
 
 app.use(cors());
 
-// var mysql = require("mysql2");
+var mysql = require("mysql2");
 
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
+
+require('./category_routes')(app);
 
 
 app.get("/api", (req, res) => {
@@ -32,6 +34,14 @@ app.get("/api", (req, res) => {
 
 app.get("/database", (req, res) => {
     console.log("Working");
+
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "Isaac-Andy1",
+        database: "blogposts"
+    });
+
     res.json({message: "Connect to database"});
 });
 
