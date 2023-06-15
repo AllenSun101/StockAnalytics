@@ -4,8 +4,10 @@ import pandas as pd
 from yahoofinancials import YahooFinancials
 import numpy as np
 
+# Change output
+def run_screener():
 
-def run_screener() -> None:
+    patterns = {}
 
     spreadsheet = pd.read_excel("Considered_Stocks.xlsx", sheet_name="Stocks")
 
@@ -13,11 +15,10 @@ def run_screener() -> None:
             "Consumer Staples", "Finance", "Healthcare", "Industrials", "Energy", "Real Estate"]
 
     # run screener functions
-    momentum = strong_momentum(spreadsheet, sectors)
-    uptrend = strong_uptrend(spreadsheet, sectors)
+    patterns["Momentum"] = strong_momentum(spreadsheet, sectors)
+    patterns["Uptrend"] = strong_uptrend(spreadsheet, sectors)
 
-    print(momentum)
-    print(uptrend)
+    return patterns
 
 
 # strong price growth
@@ -55,7 +56,7 @@ def strong_momentum(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
                 if closes[-1] - closes[-i] > atr.iloc[-i] * 2:
                     momentum_stocks.append(ticker)
                     break
-
+        break
     return momentum_stocks
 
 
@@ -91,8 +92,8 @@ def strong_uptrend(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
                     uptrend_points += 1
 
             if uptrend_points > 7:
-                uptrend_stocks.append(ticker)
-
+                uptrend_stocks.append(ticker)         
+        break
     return uptrend_stocks
 
 

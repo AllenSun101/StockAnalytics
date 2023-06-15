@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import React from "react";
+import Hero from "./hero";
 
 import dynamic from "next/dynamic";
 
@@ -21,9 +22,8 @@ export default function Home(){
     
     return(
         <div>
-            <h1>Hello</h1>
+            <Hero />
             <Plot data={test.data} layout={test.layout} />
-            <h1>Testing</h1>
         </div>
         
     )

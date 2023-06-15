@@ -3,7 +3,7 @@ import styles from './styles.module.css'
 export default function About(){
     return(
         <div className={styles.About}>
-            <h1 className="Name">Allen Sun</h1>
+            <h2 className="text-2xl">Allen Sun</h2>
             <p>Hello there! I created this website to help organize my records and thoughts 
                 in the financial markets. It serves as a portfolio of my work and an extension 
                 of my memory. Before blogging, I have previously kept records on spreadsheets 
