@@ -5,6 +5,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import Footer from './footer'
 
 export default function App({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())

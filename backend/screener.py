@@ -3,6 +3,7 @@ import datetime
 import pandas as pd
 from yahoofinancials import YahooFinancials
 import numpy as np
+import multiprocessing
 
 # Change output
 def run_screener():

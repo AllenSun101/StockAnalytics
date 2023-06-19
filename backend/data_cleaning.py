@@ -39,12 +39,18 @@ def find_duplicates() -> list[list[str, list[str]]]:
 
 
 def find_sector(ticker: str) -> str:
-    pass
+    for sector in spreadsheet.columns:
+        if ticker in spreadsheet[sector].values:
+            return sector
 
 
 def check_spreadsheet_formatting():
-    # Spaces of spreadsheet
-    pass
+    for sector in spreadsheet.columns:
+        tickers = spreadsheet[sector].dropna()
+        for ticker in tickers:
+            if " " in ticker:
+                # modify ticker
+                print(ticker)
 
 
 def verify_tickers():

@@ -1,5 +1,7 @@
 import './globals.css'
 import { Inter, Raleway, Open_Sans } from 'next/font/google'
+import Footer from './footer'
+import Navbar from './navbar'
 
 const inter = Inter({ subsets: ['latin'] })
 const raleway = Raleway({subsets: ['latin']})
@@ -16,7 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={raleway.className}>{children}</body>
+      <body className={raleway.className}>
+        <Navbar />
+        {children}
+        <Footer />
+      </body>
     </html>
   )
 }
