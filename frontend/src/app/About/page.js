@@ -8,7 +8,7 @@ export default function About(){
     {
         name: 'My Strategy:',
         description:
-        "I combine altorighmic strategies with person research to generate long-term returns that outpace \
+        "I combine algorithmic strategies with personal research to generate long-term returns that outpace \
         the benchmarks. I have proficiency in fundamentals, technicals, economics, and machine learning.",
         icon: CloudArrowUpIcon,
     },
