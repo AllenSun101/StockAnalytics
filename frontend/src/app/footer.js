@@ -1,3 +1,4 @@
+import Link from 'next/link';
 
 export default function Footer(){
     return(
@@ -69,10 +70,10 @@ export default function Footer(){
                         Navigation
                     </p>
                     <nav className="flex flex-col mt-4 space-y-2 text-sm text-gray-500">
-                        <a className="hover:opacity-75" href = "/" > About </a>
-                        <a className="hover:opacity-75" href = "/" > Blog </a>
-                        <a className="hover:opacity-75" href = "/" > Resources </a>
-                        <a className="hover:opacity-75" href = "/" > Contact </a>
+                        <Link className="hover:opacity-75" href = "/About" > About </Link>
+                        <Link className="hover:opacity-75" href = "/Blog" > Blog </Link>
+                        <Link className="hover:opacity-75" href = "/Records" > Resources </Link>
+                        <Link className="hover:opacity-75" href = "/Contact" > Contact </Link>
                     </nav>
                     </div>
                     <div>
@@ -80,11 +81,11 @@ export default function Footer(){
                         Projects
                     </p>
                     <nav className="flex flex-col mt-4 space-y-2 text-sm text-gray-500">
-                        <a className="hover:opacity-75" href = "/" > Technicals Screener </a>
-                        <a className="hover:opacity-75" href = "/" > Category Indicator </a>
-                        <a className="hover:opacity-75" href = "/" > Machine Learning </a>
-                        <a className="hover:opacity-75" href = "/" > Fundamentals Screener </a>
-                        <a className="hover:opacity-75" href = "/" > Stock Profile Tool</a>
+                        <Link className="hover:opacity-75" href = "/" > Technicals Screener </Link>
+                        <Link className="hover:opacity-75" href = "/" > Category Indicator </Link>
+                        <Link className="hover:opacity-75" href = "/" > Machine Learning </Link>
+                        <Link className="hover:opacity-75" href = "/" > Fundamentals Screener </Link>
+                        <Link className="hover:opacity-75" href = "/" > Stock Profile Tool</Link>
                     </nav>
                     </div>
                     <div>
@@ -92,9 +93,9 @@ export default function Footer(){
                         Trading Records
                     </p>
                     <nav className="flex flex-col mt-4 space-y-2 text-sm text-gray-500">
-                        <a className="hover:opacity-75" href = "/" > Trading Notes </a>
-                        <a className="hover:opacity-75" href = "/" > Historical Records </a>
-                        <a className="hover:opacity-75" href = "/" > Projections </a>
+                        <Link className="hover:opacity-75" href = "/" > Trading Notes </Link>
+                        <Link className="hover:opacity-75" href = "/" > Historical Records </Link>
+                        <Link className="hover:opacity-75" href = "/" > Projections </Link>
                     </nav>
                     </div>
                     <div>
@@ -102,8 +103,8 @@ export default function Footer(){
                         Legal
                     </p>
                     <nav className="flex flex-col mt-4 space-y-2 text-sm text-gray-500">
-                        <a className="hover:opacity-75" href = "/" > Disclaimer </a>
-                        <a className="hover:opacity-75" href = "/" > Privacy Policy </a>
+                        <Link className="hover:opacity-75" href = "/" > Disclaimer </Link>
+                        <Link className="hover:opacity-75" href = "/" > Privacy Policy </Link>
                     </nav>
                     </div>
                 </div>

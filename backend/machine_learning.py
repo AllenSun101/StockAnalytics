@@ -4,6 +4,10 @@ import pandas as pd
 from yahoofinancials import YahooFinancials
 import numpy as np
 
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+
 def get_data(ticker : str) -> pd.DataFrame:
     stock = YahooFinancials(ticker)
 
@@ -58,12 +62,32 @@ def get_data(ticker : str) -> pd.DataFrame:
 
     return df
 
-def trade_decision():
-    # Result- price up enough or not (closes-changes)
-    # Features: volatility/range, volume, MACD, Stochastics, Force Index, Exponential Moving Averages (changes)
-    # Secondary Features: ATR and EMA channel/positions 
 
-    pass
+def trade_decision(df):
+    # Result- price up enough or not (closes-changes)
+    # range, volume, MACD, Stochastics, Exponential Moving Averages (changes)
+    # EMA channel/positions 
+    # time offset, increase or decrease
+    offset = []
+    for i in range(len(df['Closes']) - 10):
+        if df['Closes'].iloc[i] < df['Closes'].iloc[i+10]:
+            offset.append(1)
+        else:
+            offset.append(0)
+
+    df = df.loc[0: len(offset)-1]
+    df['Offset'] = offset
+
+    X_indicators = df[['MACD_Histogram', 'Stochastics_K', 'Stochastics_D', 'Force_Index', 'Volume', 'ATR']]
+    y_change_direction = df[['Offset']]
+
+    X_train, X_test, y_train, y_test = train_test_split(X_indicators, y_change_direction, random_state=0)
+    model = LogisticRegression(C=1).fit(X_train, X_test)
+    train_score = model.score(X_train, y_train)
+    test_score = model.score(X_test, y_test)
+
+    print(train_score, test_score)
+    
 
 def short_squeeze():
     pass
@@ -74,3 +98,6 @@ def price_forecast():
 def portfolio_optimizer():
     pass
 
+
+df = get_data("AAPL")
+trade_decision(df)

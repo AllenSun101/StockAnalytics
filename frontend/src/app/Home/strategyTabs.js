@@ -1,7 +1,7 @@
 'use client'
 import { Tabs } from 'flowbite-react';
-import { HiAdjustments, HiClipboardList, HiUserCircle } from 'react-icons/hi';
-import { MdDashboard } from 'react-icons/md';
+import { HiOutlineChartBar, HiCurrencyDollar } from 'react-icons/hi';
+import { MdNewspaper } from 'react-icons/md';
 
 export default function Strategy_Tabs(){
     return(
@@ -11,14 +11,14 @@ export default function Strategy_Tabs(){
             </h2>
             <div className="mx-auto max-w-7xl px-6 lg:px-8 mt-6 pb-12">
                 <Tabs.Group aria-label="Tabs with underline" style="underline">
-                    <Tabs.Item active icon={HiUserCircle} title="Technicals">
+                    <Tabs.Item active icon={HiOutlineChartBar} title="Technicals">
                         <p>
                             I have used technical indicators for years to pinpoint entry and exit points. 
                             Technicals also have wide uses in pattern-based screeners and machine
                             learning applications.
                         </p>
                     </Tabs.Item>
-                    <Tabs.Item icon={MdDashboard} title="Fundamentals">
+                    <Tabs.Item icon={MdNewspaper} title="Fundamentals">
                         <p>
                             Corporate information, sector performances, economic data, and market sentiment
                             are integral in creating a dynamic, adaptive portfolio. I track the broader
@@ -26,7 +26,7 @@ export default function Strategy_Tabs(){
                             individual stocks.
                         </p>
                     </Tabs.Item>
-                    <Tabs.Item icon={HiAdjustments} title="Risk Management">
+                    <Tabs.Item icon={HiCurrencyDollar} title="Risk Management">
                         <p>
                             I seek balance between value and growth, defensive and cyclical, and various sectors to 
                             ensure that portfolios are protected from adverse market movements. I 
