@@ -17,6 +17,7 @@ app.use(express.json());
 
 require('./category_routes')(app);
 
+require('./blog_routes')(app);
 
 app.get("/api", (req, res) => {
     // Flask Connection Test- NEEDS TESTING AND FIXING

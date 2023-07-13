@@ -95,7 +95,7 @@ def short_squeeze():
 def price_forecast():
     pass
 
-def portfolio_optimizer():
+def day_trading_bot():
     pass
 
 
