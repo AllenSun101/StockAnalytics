@@ -1,5 +1,6 @@
 'use client'
 import Image from "next/image"
+import Link from "next/link"
 
 
 export default function Blog(){
@@ -7,9 +8,9 @@ export default function Blog(){
 	// add image icon
   	const posts = [
     {
-		id: 1,
+		id: 54,
 		title: 'June 21, 2023 Market Update',
-		href: '#',
+		href: '/Blog/54',
 		description:
 			'This is where the post gives a preview of market conditions and any trading updates! Have fun!',
 		date: 'June 21, 2023',
@@ -26,7 +27,7 @@ export default function Blog(){
 	{
 		id: 1,
 		title: 'June 21, 2023 Market Update',
-		href: '#',
+		href: '/Blog/LOLL',
 		description:
 			'This is where the post gives a preview of market conditions and any trading updates! Have fun!',
 		date: 'June 21, 2023',
@@ -43,7 +44,7 @@ export default function Blog(){
 	{
 		id: 3,
 		title: 'June 30, 2023 Market Update and More',
-		href: '#',
+		href: '/Blog/3',
 		description:
 			'This is where the post gives a preview of market conditions and any trading updates! Have fun!',
 		date: 'June 21, 2023',
@@ -74,7 +75,6 @@ export default function Blog(){
 			imageUrl: '/Headshot.png',
 		},
     }
-    // More posts...
   	]
 
 	return(
@@ -111,6 +111,7 @@ export default function Blog(){
 					</div>
 					</form>
 				</div>
+				
 				<div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none">
 				{posts.map((post) => (
 					<article key={post.id} className="flex max-w-xl flex-col items-start justify-between">
@@ -118,12 +119,12 @@ export default function Blog(){
 						<time dateTime={post.datetime} className="text-gray-500">
 						{post.date}
 						</time>
-						<a
+						<Link
 						href={post.category.href}
 						className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
 						>
 						{post.category.title}
-						</a>
+						</Link>
 					</div>
 					<div className="flex-1">
 						<img src={post.image} alt="" className="rounded-t-lg" style={{ height: "100%" }}/>
@@ -135,10 +136,10 @@ export default function Blog(){
 
 					<div className="group relative px-4">
 						<h3 className="mt-3 text-2xl font-bold leading-6 text-[#69328F] group-hover:text-gray-600">
-						<a href={post.href}>
+						<Link href={post.href}>
 							<span className="absolute inset-0" />
 							{post.title}
-						</a>
+						</Link>
 						</h3>
 						<p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">{post.description}</p>
 					</div>
@@ -146,29 +147,30 @@ export default function Blog(){
 						<img src={post.author.imageUrl} alt="" className="h-10 w-10 rounded-full bg-gray-50" />
 						<div className="text-sm leading-6">
 						<p className="font-semibold text-gray-900">
-							<a href={post.author.href}>
+							<Link href={post.author.href}>
 							<span className="absolute inset-0" />
 							{post.author.name}
-							</a>
+							</Link>
 						</p>
 						<p className="text-gray-600">{post.author.role}</p>
 						</div>
 					</div>
 
-
-
 					</div>
+					
 					</article>
 				))}
 				</div>
+
 				<div>
-				<button
-						type="submit"
-						className="text-white mt-3 bottom-2.5 bg-[#69328F] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-						>
-						Load More Posts
-				</button>
+					<button
+							type="submit"
+							className="text-white mt-3 bottom-2.5 bg-[#69328F] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+							>
+							Load More Posts
+					</button>
 				</div>
+
 				<div className="">
         			<h3 className="text-lg font-bold mb-2">Archives</h3>
 						<ul className="list-disc pl-6">
@@ -177,6 +179,7 @@ export default function Blog(){
 						<li>Dummy Archive 3</li>
 					</ul>
 				</div>
+
 				<div className="">
         			<h3 className="text-lg font-bold mb-2">Categories</h3>
 						<ul className="list-disc pl-6">
@@ -185,6 +188,7 @@ export default function Blog(){
 						<li>Dummy Archive 3</li>
 					</ul>
 				</div>
+
 			</div>
 		</div>
 	)
