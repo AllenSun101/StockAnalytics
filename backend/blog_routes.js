@@ -16,13 +16,10 @@ module.exports = function(app){
       
       con.connect(function(err) {
         if (err) throw err;
-        console.log("Connected!");
+        console.log("Connected for blog!");
 
         // Render most recent posts
-        var sql = "SELECT * FROM blogposts ORDER BY idBlogPosts DESC LIMIT " + con.escape(posts);
-
-
-        //var sql = "INSERT INTO blogposts (Title, Author, Date, BlogText) VALUES ('Title', 'Allen', '2023-03-12', 'Text')";
+        var sql = "SELECT idPosts, Title, Author, Date, Category, ImageURL, Description FROM posts ORDER BY idPosts DESC LIMIT " + con.escape(posts);
 
         con.query(sql, function (err, result) {
             if (err) throw err;
@@ -39,8 +36,9 @@ module.exports = function(app){
 
 
     app.post("/Retrieve_Post", (req, res) => {
-        console.log("Testing");
 
+        console.log("Testing");
+        
         var con = mysql.createConnection({
             host: "localhost",
             user: "root",
@@ -55,7 +53,7 @@ module.exports = function(app){
 
             console.log(req.body.id);
 
-            var sql = "SELECT * FROM blogposts WHERE idBlogPosts = " + req.body.id;
+            var sql = "SELECT Title, Author, Date, Category, Description, Text FROM posts WHERE idPosts = " + req.body.id;
 
             con.query(sql, function (err, result) {
                 if (err) throw err;
