@@ -6,7 +6,7 @@ import numpy as np
 import multiprocessing
 
 # Change output
-def run_screener():
+def run_screener(date: str):
 
     patterns = {}
 
@@ -14,16 +14,23 @@ def run_screener():
 
     sectors = ["Information Technology", "Communication Services", "Consumer Discretionary",
             "Consumer Staples", "Finance", "Healthcare", "Industrials", "Energy", "Real Estate"]
+    
+    input = "%Y-%m-%d"
 
+    date_object = datetime.datetime.strptime(date, input).date()
+
+    start = str(date_object - datetime.timedelta(days=40))
+    end = str(date_object - datetime.timedelta(days=0))
+    
     # run screener functions
-    patterns["Momentum"] = strong_momentum(spreadsheet, sectors)
-    patterns["Uptrend"] = strong_uptrend(spreadsheet, sectors)
+    patterns["Momentum"] = strong_momentum(spreadsheet, sectors, start, end)
+    patterns["Uptrend"] = strong_uptrend(spreadsheet, sectors, start, end)
 
     return patterns
 
 
 # strong price growth
-def strong_momentum(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
+def strong_momentum(spreadsheet: pd.DataFrame, sectors: list[str], start, end) -> list[str]:
     momentum_stocks = []
 
     for sector in sectors:
@@ -33,9 +40,6 @@ def strong_momentum(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
 
             print(ticker)
             stock = YahooFinancials(ticker)
-
-            start = str(datetime.date.today() - datetime.timedelta(days=40))
-            end = str(datetime.date.today() - datetime.timedelta(days=0))
 
             historical_closes = stock.get_historical_price_data(start, end, "daily")
             prices = historical_closes[ticker]['prices']
@@ -57,12 +61,12 @@ def strong_momentum(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
                 if closes[-1] - closes[-i] > atr.iloc[-i] * 2:
                     momentum_stocks.append(ticker)
                     break
-        break
+
     return momentum_stocks
 
 
 # strong positive trend
-def strong_uptrend(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
+def strong_uptrend(spreadsheet: pd.DataFrame, sectors: list[str], start, end) -> list[str]:
     uptrend_stocks = []
 
     for sector in sectors:
@@ -72,9 +76,6 @@ def strong_uptrend(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
 
             print(ticker)
             stock = YahooFinancials(ticker)
-
-            start = str(datetime.date.today() - datetime.timedelta(days=100))
-            end = str(datetime.date.today() - datetime.timedelta(days=0))
 
             historical_closes = stock.get_historical_price_data(start, end, "daily")
             prices = historical_closes[ticker]['prices']
@@ -94,7 +95,7 @@ def strong_uptrend(spreadsheet: pd.DataFrame, sectors: list[str]) -> list[str]:
 
             if uptrend_points > 7:
                 uptrend_stocks.append(ticker)         
-        break
+
     return uptrend_stocks
 
 

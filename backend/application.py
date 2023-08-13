@@ -13,5 +13,9 @@ def display_indicators():
 def display_screener():
     return screener.run_screener()
 
+@app.route('/broad_screener/<date>', methods=['GET'])
+def broad_screener(date):
+    return screener.run_screener(date)
+
 if __name__ == '__main__':
    app.run(debug = True)

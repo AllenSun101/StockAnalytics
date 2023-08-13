@@ -2,9 +2,12 @@ import axios from "axios";
 import React from "react";
 
 async function getData(){
-	var patterns = {"No patterns detected": ["No selected stocks"]};
+	var patterns = [];
 
-	await axios.get('http://localhost:3001/screener')
+	await axios.post('http://localhost:3001/screener_find_date', {
+		screener: "broadscreener",
+		date: "2023-08-08"
+	})
 		.then(
 			response => {
 				patterns = response.data;
@@ -20,21 +23,18 @@ async function getData(){
 
 export default async function Screener() {
 	const data = await getData();
+	console.log(data);
 
-	var output = [];
+	var setups = ['Momentum', 'Trend'];
 
-	for(const pattern in data){
-		data[pattern] = data[pattern].join(", ");
-	}
-
-	for (const [key, value] of Object.entries(data)) {
-		output.push(<li> {key + ": " + value} </li>);
-	}
-	
 	return (
 		<div>
-			<p>Hello</p>
-			<ul>{output}</ul>
+			<p>Screener</p>
+			<ul>
+				{setups.map((setup, index) => (
+    				<li key={index}>{setup + ":" + data[setup]}</li>
+  				))}
+			</ul>
 		</div>	
 	)
 }

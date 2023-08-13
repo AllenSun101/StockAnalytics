@@ -19,6 +19,8 @@ require('./category_routes')(app);
 
 require('./blog_routes')(app);
 
+require('./screener_routes')(app);
+
 app.get("/api", (req, res) => {
     // Flask Connection Test- NEEDS TESTING AND FIXING
     // May need to move files to backend directory

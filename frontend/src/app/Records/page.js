@@ -6,6 +6,9 @@ export default function Records(){
     return(
         <div className='bg-white pt-24 sm:py-32'>
             <div className='mx-auto max-w-7xl px-6 lg:px-8'>
+                <h2 className="mb-4 text-center leading-8 text-cadet-gray text-2xl font-bold tracking-tight sm:text-4xl">
+                        Trading Records
+                </h2>
             <Accordion collapseAll>
                 <Accordion.Panel>
                     <Accordion.Title>
@@ -13,8 +16,13 @@ export default function Records(){
                     </Accordion.Title>
                 <Accordion.Content>
                     <p className="mb-2 text-gray-500 dark:text-gray-400">
-                        Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons,
-                        dropdowns, modals, navbars, and more.
+                        Last Updated: July 21, 2023
+                    </p>
+                    <p className="mb-2 text-gray-500 dark:text-gray-400">
+                        Innovation Fund
+                    </p>
+                    <p className="mb-2 text-gray-500 dark:text-gray-400">
+                        Active Management Fund
                     </p>
                 </Accordion.Content>
             </Accordion.Panel>
@@ -24,8 +32,7 @@ export default function Records(){
                 </Accordion.Title>
                  <Accordion.Content>
                     <p className="mb-2 text-gray-500 dark:text-gray-400">
-                        Flowbite is first conceptualized and designed using the Figma software so everything you see in the library
-                        has a design equivalent in our Figma file.
+                        Chart of YTD Performance
                     </p>
                 </Accordion.Content>
             </Accordion.Panel>
@@ -35,43 +42,31 @@ export default function Records(){
                 </Accordion.Title>
                 <Accordion.Content>
                     <p className="mb-2 text-gray-500 dark:text-gray-400">
-                        The main difference is that the core components from Flowbite are open source under the MIT license, whereas
-                        Tailwind UI is a paid product. Another difference is that Flowbite relies on smaller and standalone
-                        components, whereas Tailwind UI offers sections of pages.
+                        Table of Recent Transactions
                     </p>
+                </Accordion.Content>
+            </Accordion.Panel>
+            <Accordion.Panel>
+                <Accordion.Title>
+                    Historical Returns
+                </Accordion.Title>
+                <Accordion.Content>
                     <p className="mb-2 text-gray-500 dark:text-gray-400">
-                        However, we actually recommend using both Flowbite, Flowbite Pro, and even Tailwind UI as there is no
-                        technical reason stopping you from using the best of two worlds.
+                        Chart of Historical Returns
                     </p>
-                    <ul className="list-disc pl-5 text-gray-500 dark:text-gray-400">
-                        <li>
-                        <a
-                            className="text-cyan-600 hover:underline dark:text-cyan-500"
-                            href="https://flowbite.com/pro/"
-                        >
-                            <p>
-                            Flowbite Pro
-                            </p>
-                        </a>
-                        </li>
-                        <li>
-                        <a
-                            className="text-cyan-600 hover:underline dark:text-cyan-500"
-                            href="https://tailwindui.com/"
-                            rel="nofollow"
-                        >
-                            <p>
-                            Tailwind UI
-                            </p>
-                        </a>
-                        </li>
-                    </ul>
                 </Accordion.Content>
             </Accordion.Panel>
             </Accordion>
             </div>
-            <div>
-                <h2>More resources</h2>
+            <div className='mt-6 text-center'>
+                <h2 className="mb-4 leading-8 text-cadet-gray text-2xl font-bold tracking-tight sm:text-4xl">
+                        More Resources
+                </h2>
+                <p>Trading Notes (Cards)</p>
+                <p>Premarket Playbook</p>
+                <p>Historical Transactions</p>
+                <p>Economic Projections</p>
+
             </div>
         </div>
     )
