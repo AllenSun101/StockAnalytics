@@ -7,6 +7,8 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
+import tensorflow as tf
+
 
 def get_data(ticker : str) -> pd.DataFrame:
     stock = YahooFinancials(ticker)
@@ -29,7 +31,7 @@ def get_data(ticker : str) -> pd.DataFrame:
     df['Closes'] = closes
     df['Volume'] = volume
 
-    # EMAs
+    # EMAs - Exclude or modify
     df['EMA_20'] = round(df['Closes'].ewm(span=20).mean(), 2)
     df['EMA_50'] = round(df['Closes'].ewm(span=50).mean(), 2)
     df['EMA_200'] = round(df['Closes'].ewm(span=200).mean(), 2)
@@ -60,6 +62,9 @@ def get_data(ticker : str) -> pd.DataFrame:
     df['True_Range'] = np.max(ranges, axis=1)
     df['ATR'] = round(df['True_Range'].rolling(14).sum() / 14, 2)
 
+    # Offset Close- How to do time series?
+    df['Offset'] = df['Closes'].loc[0]
+
     return df
 
 
@@ -68,20 +73,12 @@ def trade_decision(df):
     # range, volume, MACD, Stochastics, Exponential Moving Averages (changes)
     # EMA channel/positions 
     # time offset, increase or decrease
-    offset = []
-    for i in range(len(df['Closes']) - 10):
-        if df['Closes'].iloc[i] < df['Closes'].iloc[i+10]:
-            offset.append(1)
-        else:
-            offset.append(0)
-
-    df = df.loc[0: len(offset)-1]
-    df['Offset'] = offset
-
+    df = df.iloc[19:]
     X_indicators = df[['MACD_Histogram', 'Stochastics_K', 'Stochastics_D', 'Force_Index', 'Volume', 'ATR']]
-    y_change_direction = df[['Offset']]
+    y_change_direction = df[['Offset',]]
 
-    X_train, X_test, y_train, y_test = train_test_split(X_indicators, y_change_direction, random_state=0)
+    X_train, y_train, X_test, y_test = train_test_split(X_indicators, y_change_direction, train_size=0.7, random_state=0)
+
     model = LogisticRegression(C=1).fit(X_train, X_test)
     train_score = model.score(X_train, y_train)
     test_score = model.score(X_test, y_test)
@@ -100,4 +97,5 @@ def day_trading_bot():
 
 
 df = get_data("AAPL")
+df.to_excel('output.xlsx', index=False) 
 trade_decision(df)

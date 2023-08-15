@@ -2,15 +2,18 @@
 import Link from "next/link"
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function Blog(){
 
+	const [numPosts, setNumPosts] = useState(6);
+
 	// Retrieve Data
 
-	const { isLoading, error, data } = useQuery({
+	const { isLoading, error, data, refetch } = useQuery({
         queryKey: ['Testing'],
         queryFn: () =>
-            axios.post("http://localhost:3001/blog_posts").then(
+            axios.post("http://localhost:3001/blog_posts", {numPosts}).then(
             (res) => res.data,
           ),
     })
@@ -40,6 +43,11 @@ export default function Blog(){
         return month + " " + day + ", " + year;
     }
 
+	function LoadMorePosts(){
+		setNumPosts(numPosts + 3);
+		refetch();
+	}
+
   	const posts = [
     {
 		id: 1,
@@ -51,40 +59,6 @@ export default function Blog(){
 		datetime: '2023-06-21',
 		category: { title: 'Daily Market Updates', href: '#' },
 		image: '/WallStreet.jpeg',
-		author: {
-			name: 'Allen Sun',
-			role: 'Founder',
-			href: '#',
-			imageUrl: '/Headshot.png',
-		},
-    },
-	{
-		id: 1,
-		title: 'June 21, 2023 Market Update',
-		href: '/Blog/2',
-		description:
-			'This is where the post gives a preview of market conditions and any trading updates! Have fun!',
-		date: 'June 21, 2023',
-		datetime: '2023-06-21',
-		category: { title: 'Daily Market Updates', href: '#' },
-		image: '/Hero3.jpg',
-		author: {
-			name: 'Allen Sun',
-			role: 'Founder',
-			href: '#',
-			imageUrl: '/Headshot.png',
-		},
-    },
-	{
-		id: 3,
-		title: 'June 30, 2023 Market Update and More',
-		href: '/About',
-		description:
-			'This is where the post gives a preview of market conditions and any trading updates! Have fun!',
-		date: 'June 21, 2023',
-		datetime: '2023-06-21',
-		category: { title: 'Daily Market Updates', href: '#' },
-		image: '/Hero2.jpg',
 		author: {
 			name: 'Allen Sun',
 			role: 'Founder',
@@ -127,10 +101,9 @@ export default function Blog(){
 						Search
 						</button>
 					</div>
-					</form>
+				</form>
 				</div>
 
-				
 				<div className="container px-4 py-24 mx-auto">
       				<div className="flex flex-wrap -m-4">
         				{data.map((post, index) => (
@@ -154,8 +127,7 @@ export default function Blog(){
 									/>
 									<div className="p-6">
 										<h1 className="mt-3 text-2xl font-bold leading-6 text-[#69328F] group-hover:text-gray-600 mb-3">
-											<Link href={"/Blog/" + post.idPosts}>
-												<span className="absolute inset-0" />
+											<Link href={`/Blog/${post.idPosts}`}>
 												{post.Title}
 											</Link>
 										</h1>
@@ -182,10 +154,10 @@ export default function Blog(){
     			</div>
 
 				<div>
-					<button
-							type="submit"
-							className="text-white mt-3 bottom-2.5 bg-[#69328F] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-							>
+					<button type="submit"
+						className="text-white mt-3 bottom-2.5 bg-[#69328F] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						onClick={LoadMorePosts}
+						>
 							Load More Posts
 					</button>
 				</div>

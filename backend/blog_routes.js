@@ -4,8 +4,8 @@ module.exports = function(app){
     app.post("/blog_posts", (req, res) => {
         console.log("Load is working");
 
-        var posts = 6;
-        // var numPosts = req.body.numPosts;
+        var posts = req.body.numPosts;
+        console.log(posts);
 
         var con = mysql.createConnection({
             host: "localhost",
@@ -50,8 +50,6 @@ module.exports = function(app){
         con.connect(function(err) {
             if (err) throw err;
             console.log("Connected!");
-
-            console.log(req.body.id);
 
             var sql = "SELECT Title, Author, Date, Category, Description, Text FROM posts WHERE idPosts = " + req.body.id;
 

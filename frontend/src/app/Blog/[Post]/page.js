@@ -19,11 +19,10 @@ async function getPost(postID){
 }
 
 export default async function Post(props){
-    console.log(props.params.Post);
-
+	
     const data = await getPost(props.params.Post);
     
-    console.log(data.Title);
+    // console.log(data.Title);
 
 	function FormatDate(date){
         var monthConversion = {
