@@ -78,5 +78,17 @@ def verify_tickers():
                 bad_tickers.append(ticker)
         
     return bad_tickers
+
+def remove_invalid_tickers(tickers):
+    # NEEDS FIXING
+    df = pd.read_excel("Considered_Stocks.xlsx", sheet_name="Stocks")
+    for ticker in tickers:
+        sector = find_sector(ticker)
+        row = df[df[sector] == ticker].index[0]  # Find the index of the row with the ticker
+        df.iloc[row:-1, sector] = df.iloc[row + 1:, sector].values  # Shift values below the ticker up
+        df.iat[-1, sector] = None  # Set the last value to None
+    df.to_excel("test.xlsx", sheet_name="Stocks", index=False)
+
             
 # print(verify_tickers())
+remove_invalid_tickers(["AAPL"])

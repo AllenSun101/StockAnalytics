@@ -3,7 +3,6 @@ import datetime
 import pandas as pd
 from yahoofinancials import YahooFinancials
 import numpy as np
-import multiprocessing
 
 # Change output
 def run_screener(date: str):
@@ -23,15 +22,16 @@ def run_screener(date: str):
     end = str(date_object - datetime.timedelta(days=0))
     
     # run screener functions
-    patterns["Momentum"] = strong_momentum(spreadsheet, sectors, start, end)
-    patterns["Uptrend"] = strong_uptrend(spreadsheet, sectors, start, end)
+    results = run_tickers(spreadsheet, sectors, start, end)
+    patterns["Momentum"] = results[0]
+    patterns["Uptrend"] = results[1]
 
     return patterns
 
 
-# strong price growth
-def strong_momentum(spreadsheet: pd.DataFrame, sectors: list[str], start, end) -> list[str]:
+def run_tickers(spreadsheet: pd.DataFrame, sectors: list[str], start, end) -> list[str]:
     momentum_stocks = []
+    uptrend_stocks = []
 
     for sector in sectors:
         tickers = spreadsheet[sector].dropna()
@@ -46,57 +46,56 @@ def strong_momentum(spreadsheet: pd.DataFrame, sectors: list[str], start, end) -
 
             closes = [round(day['close'], 2) for day in prices]     
             highs = [round(day['high'], 2) for day in prices]     
-            lows = [round(day['low'], 2) for day in prices]   
-            
-            # create pandas dataframe for processing
-            df = pd.DataFrame()
-            df['Highs'] = highs
-            df['Lows'] = lows
-            df['Closes'] = closes
+            lows = [round(day['low'], 2) for day in prices]  
 
-            atr = average_true_range(df)
-            
-            # check if close is at least 2 ATRs above lowest point in last ten days 
-            for i in range(2, 12):
-                if closes[-1] - closes[-i] > atr.iloc[-i] * 2:
-                    momentum_stocks.append(ticker)
-                    break
+            broad_momentum = strong_momentum(closes, highs, lows)
+            broad_uptrend = strong_uptrend(closes, highs, lows)
 
-    return momentum_stocks
+            if broad_momentum:
+                momentum_stocks.append(ticker)
+
+            if broad_uptrend:
+                uptrend_stocks.append(ticker)
+        
+    return [momentum_stocks, uptrend_stocks]
+
+
+# strong price growth
+def strong_momentum(closes, highs, lows) -> bool:
+    # create pandas dataframe for processing
+    df = pd.DataFrame()
+    df['Highs'] = highs
+    df['Lows'] = lows
+    df['Closes'] = closes
+
+    atr = average_true_range(df)
+
+    # check if close is at least 2 ATRs above lowest point in last ten days 
+    for i in range(2, 12):
+        if closes[-1] - closes[-i] > atr.iloc[-i] * 2:
+            return True
+    
+    return False
 
 
 # strong positive trend
-def strong_uptrend(spreadsheet: pd.DataFrame, sectors: list[str], start, end) -> list[str]:
-    uptrend_stocks = []
+def strong_uptrend(closes, highs, lows) -> list[str]:
+            
+    # Dataframe of exponential moving averages
+    ema = pd.DataFrame()
+    ema["Closes"] = closes
+    ema["50 EMA"] = round(ema["Closes"].ewm(span=50).mean(), 2)
 
-    for sector in sectors:
-        tickers = spreadsheet[sector].dropna()
+    # check if 50 day ema increases in seven of last ten days
+    uptrend_points = 0
+    for i in range(-10, 0, 1):
+        if ema["50 EMA"].iloc[i] > ema["50 EMA"].iloc[i - 1]:
+            uptrend_points += 1
 
-        for ticker in tickers:
+    if uptrend_points > 7:
+        return True      
 
-            print(ticker)
-            stock = YahooFinancials(ticker)
-
-            historical_closes = stock.get_historical_price_data(start, end, "daily")
-            prices = historical_closes[ticker]['prices']
-
-            closes = [round(day['close'], 2) for day in prices]
-
-            # Dataframe of exponential moving averages
-            ema = pd.DataFrame()
-            ema["Closes"] = closes
-            ema["50 EMA"] = round(ema["Closes"].ewm(span=50).mean(), 2)
-
-            # check if 50 day ema increases in seven of last ten days
-            uptrend_points = 0
-            for i in range(-10, 0, 1):
-                if ema["50 EMA"].iloc[i] > ema["50 EMA"].iloc[i - 1]:
-                    uptrend_points += 1
-
-            if uptrend_points > 7:
-                uptrend_stocks.append(ticker)         
-
-    return uptrend_stocks
+    return False
 
 
 def average_true_range(dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -110,4 +109,4 @@ def average_true_range(dataframe: pd.DataFrame) -> pd.DataFrame:
     return atr
 
 
-# run_screener()
+# run_screener("2023-08-14")

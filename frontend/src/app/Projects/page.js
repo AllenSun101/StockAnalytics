@@ -13,25 +13,6 @@ export default function Projects(){
 			</div>
 			<div className='mx-auto max-w-7xl px-6 lg:px-8 mt-6'>
 				<div className="mx-auto max-w-2xl lg:mx-0 mb-2">
-					<h3 className="text-lg font-bold text-gray-900 sm:text-2xl">Fundamental Analysis</h3>
-					<div className='max-w-sm'>
-						<Card
-							imgAlt="Meaningful alt text for an image that is not purely decorative"
-							imgSrc="/WallStreet.jpeg"
-						>
-							<h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-								Sector Category Indicator
-							</h5>
-							<p className="font-normal text-gray-700 dark:text-gray-400">
-								Evaluates relative strength of individual market sectors.
-							</p>
-							<Button>
-								<p>Explore Project</p>
-							</Button>
-						</Card>
-					</div>
-				</div>
-				<div className="mx-auto max-w-2xl lg:mx-0 mb-2">
 					<h3 className="text-lg font-bold text-gray-900 sm:text-2xl">Technical Analysis</h3>
 					<div className='max-w-sm'>
 						<Card

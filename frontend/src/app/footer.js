@@ -84,8 +84,6 @@ export default function Footer(){
                         <Link className="hover:opacity-75" href = "/" > Technicals Screener </Link>
                         <Link className="hover:opacity-75" href = "/" > Category Indicator </Link>
                         <Link className="hover:opacity-75" href = "/" > Machine Learning </Link>
-                        <Link className="hover:opacity-75" href = "/" > Fundamentals Screener </Link>
-                        <Link className="hover:opacity-75" href = "/" > Stock Profile Tool</Link>
                     </nav>
                     </div>
                     <div>
@@ -93,9 +91,10 @@ export default function Footer(){
                         Trading Records
                     </p>
                     <nav className="flex flex-col mt-4 space-y-2 text-sm text-gray-500">
+                        <Link className="hover:opacity-75" href = "/Records" > Trading Records </Link>
                         <Link className="hover:opacity-75" href = "/" > Trading Notes </Link>
                         <Link className="hover:opacity-75" href = "/" > Historical Records </Link>
-                        <Link className="hover:opacity-75" href = "/" > Projections </Link>
+                        <Link className="hover:opacity-75" href = "/" > Premarket Playbook </Link>
                     </nav>
                     </div>
                     <div>
