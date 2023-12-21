@@ -163,9 +163,6 @@ export default function Records(){
                     Historical Returns
                 </Accordion.Title>
                 <Accordion.Content>
-                    <p className="mb-2 text-gray-500 dark:text-gray-400">
-                        Chart of Historical Returns (Plotly), Table as well
-                    </p>
                     <div className="md:px-32 py-8 w-full">
                         <div className="shadow rounded border-b border-gray-200 overflow-x-auto">
                             <table className="min-w-full bg-white">

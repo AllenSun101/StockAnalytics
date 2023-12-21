@@ -24,10 +24,18 @@ export default function Contact() {
               'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
           }}
         />
+        <div
+          className="absolute top-1/2 left-1/4 -z-100 aspect-[987/654] w-[28.125rem] max-w-none rotate-[15deg] bg-gradient-to-br from-[#ff80b5] to-[#9089fc] opacity-40 sm:left-[calc(50%-20rem)] sm:w-[56.1875rem]"
+          style={{
+            clipPath:
+              'polygon(40% 20%, 100% 40%, 85% 10%, 70% 0%, 65% 5%, 55% 30%, 40% 60%, 30% 70%, 25% 60%, 22% 35%, 10% 80%, 0% 70%, 12% 100%, 15% 80%, 60% 95%, 40% 20%)',
+          }}
+        />
+
       </div>
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Contact Me</h2>
-        <p className="mt-2 text-lg leading-8 text-gray-600">
+        <h2 className="text-3xl font-bold tracking-tight text-cadet-gray sm:text-4xl">Contact Me</h2>
+        <p className="mt-2 text-lg leading-8">
           For any comments, questions, feedback, opportunities, or just a hello!
         </p>
       </div>

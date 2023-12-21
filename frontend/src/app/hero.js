@@ -11,7 +11,7 @@ export default function Hero() {
 						Welcome to my site!
 					</h1>
 					<p className="relative mt-6 text-lg leading-8 text-gray-600">
-						I'm Allen, an eighteen-year-old stock market enthusiast. I love trading,
+						I'm Allen, an nineteen-year-old stock market enthusiast. I love trading,
 						programming with finance, and following up on innovation!
 					</p>
 				</div>

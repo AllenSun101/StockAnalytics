@@ -14,7 +14,7 @@ export default function About(){
     },
     {
         name: 'Big Ideas:',
-        description: "I'm a huge fan of technology, fintech, blockchain, renewable energy, and \
+        description: "I'm a huge fan of technology, fintech, blockchain, artificial intelligence, and \
         disruptive innovation. ",
         icon: LightBulbIcon,
     },
@@ -35,14 +35,14 @@ export default function About(){
                             <div className="lg:max-w-2xl">
                                 <h2 className="text-base font-semibold leading-7 text-indigo-600">About Me</h2>
                                 <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Allen Sun</p>
-                                <p className="mt-6 text-lg leading-8 text-gray-600">
-                                    Hello there! I'm Allen, an eighteen-year-old trader. I first ventured into the markets at the age of 
+                                <p className="mt-6 text-lg leading-8">
+                                    Hello there! I'm Allen, an nineteen-year-old trader. I first ventured into the markets at the age of 
                                     seven (June 2012). I developed this website to share my ideas and store my records.
                                 </p>
                                 <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
                                     {features.map((feature) => (
                                         <div key={feature.name} className="relative pl-9">
-                                            <dt className="inline font-semibold text-gray-900">
+                                            <dt className="inline font-semibold">
                                                 <feature.icon className="absolute left-1 top-1 h-5 w-5 text-indigo-600" aria-hidden="true" />
                                                 {feature.name}
                                             </dt>{' '}
@@ -69,9 +69,9 @@ export default function About(){
                             <div className="order-1 w-5/12"></div>
                             <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
                             </div>
-                            <div className="order-1 bg-indigo-100 rounded-lg shadow-xl w-5/12 px-6 py-4">
-                                <h3 className="mb-3 font-bold text-gray-800 text-xl">June 2012</h3>
-                                <p className="text-sm leading-snug tracking-wide text-gray-900 text-opacity-100">
+                            <div className="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                                <h3 className="mb-3 font-bold text-xl">June 2012</h3>
+                                <p className="leading-snug tracking-wide text-opacity-100">
                                     I started to track stocks, including HAL, GM, ATPG, BA, & PSUN. I paper traded and 
                                     read various books throughout the next years, notably in 2016 and 2018.
                                 </p>
@@ -82,9 +82,9 @@ export default function About(){
                             <div className="order-1 w-5/12"></div>
                             <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
                             </div>
-                            <div className="order-1 bg-cadet-gray rounded-lg shadow-xl w-5/12 px-6 py-4">
-                                <h3 className="mb-3 font-bold text-white text-xl">June 2019</h3>
-                                <p className="text-sm font-medium leading-snug tracking-wide text-white text-opacity-100">
+                            <div className="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                                <h3 className="mb-3 font-bold text-xl">June 2019</h3>
+                                <p className="leading-snug tracking-wide text-opacity-100">
                                     I built my first watchlist and started applying technical indicators and 
                                     pattern-recognition techniques.
                                 </p>
@@ -95,9 +95,9 @@ export default function About(){
                             <div className="order-1 w-5/12"></div>
                             <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
                             </div>
-                            <div className="order-1 bg-indigo-100 rounded-lg shadow-xl w-5/12 px-6 py-4">
-                                <h3 className="mb-3 font-bold text-gray-800 text-xl">June 2020</h3>
-                                <p className="text-sm leading-snug tracking-wide text-gray-900 text-opacity-100">
+                            <div className="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                                <h3 className="mb-3 font-bold text-xl">June 2020</h3>
+                                <p className="leading-snug tracking-wide text-opacity-100">
                                     I opened an Investopedia paper account. In July 2020, I also opened an 
                                     Interactive Brokers paper account. I reset the Interactive Brokers Account in August 
                                     and then used it as my sole trading account.
@@ -107,11 +107,11 @@ export default function About(){
 
                         <div className="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
                             <div className="order-1 w-5/12"></div>
-                            <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
+                            <div className="z-20 flex bg-gray-800 items-center order-1 shadow-xl w-8 h-8 rounded-full">
                             </div>
-                            <div className="order-1 bg-cadet-gray rounded-lg shadow-xl w-5/12 px-6 py-4">
-                                <h3 className="mb-3 font-bold text-white text-xl">December 2020</h3>
-                                <p className="text-sm font-medium leading-snug tracking-wide text-white text-opacity-100">
+                            <div className="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                                <h3 className="mb-3 font-bold text-xl">December 2020</h3>
+                                <p className="leading-snug tracking-wide text-opacity-100">
                                     I closed out the Interactive Brokers account and transitioned to a TD Ameritrade 
                                     brokerage account.Aggregated from my accounts, I produced a year-end return of 38.54% 
                                     (from June 2020). 
@@ -123,9 +123,9 @@ export default function About(){
                             <div className="order-1 w-5/12"></div>
                             <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
                             </div>
-                            <div className="order-1 bg-indigo-100 rounded-lg shadow-xl w-5/12 px-6 py-4">
-                                <h3 className="mb-3 font-bold text-gray-800 text-xl">December 2021</h3>
-                                <p className="text-sm leading-snug tracking-wide text-gray-900 text-opacity-100">
+                            <div className="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                                <h3 className="mb-3 font-bold text-xl">December 2021</h3>
+                                <p className="leading-snug tracking-wide text-opacity-100">
                                     I finished the year with a 21.40% annual return on my trading account.
                                 </p>
                             </div>
@@ -135,9 +135,9 @@ export default function About(){
                             <div className="order-1 w-5/12"></div>
                             <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
                             </div>
-                            <div className="order-1 bg-cadet-gray rounded-lg shadow-xl w-5/12 px-6 py-4">
-                                <h3 className="mb-3 font-bold text-white text-xl">February 2022</h3>
-                                <p className="text-sm font-medium leading-snug tracking-wide text-white text-opacity-100">
+                            <div className="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                                <h3 className="mb-3 font-bold text-xl">February 2022</h3>
+                                <p className="leading-snug tracking-wide text-opacity-100">
                                     I launched my paper fund on Interactive Brokers, starting with $200,000. 
                                     Managing two accounts gave me greater flexibility in my choices. I started 
                                     observing market dynamics and economics in greater detail.
@@ -149,9 +149,9 @@ export default function About(){
                             <div className="order-1 w-5/12"></div>
                             <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
                             </div>
-                            <div className="order-1 bg-indigo-100 rounded-lg shadow-xl w-5/12 px-6 py-4">
-                                <h3 className="mb-3 font-bold text-gray-800 text-xl">July 2022</h3>
-                                <p className="text-sm leading-snug tracking-wide text-gray-900 text-opacity-100">
+                            <div className="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                                <h3 className="mb-3 font-bold text-xl">July 2022</h3>
+                                <p className="leading-snug tracking-wide text-opacity-100">
                                     I launched my first Website, <i>Dark Horse of Wall Street</i> ,
                                     using Wordpress. 
                                 </p>
@@ -162,9 +162,9 @@ export default function About(){
                             <div className="order-1 w-5/12"></div>
                             <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
                             </div>
-                            <div className="order-1 bg-cadet-gray rounded-lg shadow-xl w-5/12 px-6 py-4">
-                                <h3 className="mb-3 font-bold text-white text-xl">December 2022</h3>
-                                <p className="text-sm font-medium leading-snug tracking-wide text-white text-opacity-100">
+                            <div className="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                                <h3 className="mb-3 font-bold text-xl">December 2022</h3>
+                                <p className="leading-snug tracking-wide text-opacity-100">
                                     I created a stock evaluation system where I manually track around 120 
                                     stocks on a rotating basis. My screener analyzes 1300+ other stocks.
                                 </p>
