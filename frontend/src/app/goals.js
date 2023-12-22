@@ -5,7 +5,7 @@ import { Card } from 'flowbite-react';
 export default function Goals(){
     return(
         <div className='bg-white'>
-            <h2 className="text-center mt-12 leading-8 text-cadet-gray text-2xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-center mt-12 leading-8 text-cadet-gray text-3xl font-bold tracking-tight sm:text-4xl">
                     My Goals
             </h2>
             <div className='mt-6 text-lg leading-8 text-gray-600 pb-6 grid lg:grid-cols-3 justify-center'>

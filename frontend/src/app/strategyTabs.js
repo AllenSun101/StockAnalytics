@@ -6,7 +6,7 @@ import { MdNewspaper } from 'react-icons/md';
 export default function Strategy_Tabs(){
     return(
         <div>
-            <h2 className="text-center mt-12 leading-8 text-cadet-gray text-2xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-center mt-12 leading-8 text-cadet-gray text-3xl font-bold tracking-tight sm:text-4xl">
                 My Portfolio Strategy
             </h2>
             <div className="mx-auto max-w-7xl px-6 lg:px-8 mt-6 pb-12">
