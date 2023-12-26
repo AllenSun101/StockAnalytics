@@ -25,7 +25,7 @@ export default function Contact() {
       </div>
 
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold text-cadet-gray sm:text-4xl">Contact Me</h2>
+        <h2 className="text-3xl font-bold text-cadet-gray tracking-tight sm:text-4xl">Contact Me</h2>
         <p className="mt-2 text-lg leading-8">
           For any comments, questions, feedback, opportunities, or just a hello!
         </p>
@@ -92,7 +92,7 @@ export default function Contact() {
         <div className="mt-10">
           <button
             type="submit"
-            className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="block w-full flex-none rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
           >
             Let's talk
           </button>

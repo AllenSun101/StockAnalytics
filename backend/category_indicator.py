@@ -3,35 +3,31 @@ import plotly.graph_objects as go
 import plotly
 import pandas as pd
 from yahoofinancials import YahooFinancials
-import numpy as np
 
 
-def update_indicators() -> None:
+def build_chart(start, end, version):
 
     spreadsheet = pd.read_excel("Considered_Stocks.xlsx", sheet_name="Stocks")
 
     sectors = ["Information Technology", "Communication Services", "Consumer Discretionary",
            "Consumer Staples", "Finance", "Healthcare", "Industrials", "Energy", "Materials",
            "Utilities", "Real Estate"]
-    
-    # Set start and end dates
-    # Database last date will later determine how much to run
-    start = str(datetime.date.today() - datetime.timedelta(days=151))
-    end = str(datetime.date.today())
 
     # Get all market open dates
-    test = YahooFinancials("SPY").get_historical_price_data(start, end, "daily")
-    market_data = test["SPY"]['prices']
-    dates = [days['formatted_date'] for days in market_data]
+    try:
+        test = YahooFinancials("SPY").get_historical_price_data(start, end, "daily")
+        market_data = test["SPY"]['prices']
+        dates = [days['formatted_date'] for days in market_data]
+    except: 
+        return "Error"
 
     # Call indicator calculations
-    uptrend(dates, sectors, spreadsheet, start, end)
-    price_growth(dates, sectors, spreadsheet, start, end)
-    aggregate_percentage_growth(dates, sectors, spreadsheet, start, end)
-
-
-def get_indicators():
-    return "Flask Connected!"
+    if version == "Uptrend":
+        return uptrend(dates, sectors, spreadsheet, start, end)
+    elif version == "Increase":
+        return price_growth(dates, sectors, spreadsheet, start, end)
+    else:
+        return aggregate_percentage_growth(dates, sectors, spreadsheet, start, end)
 
 
 def uptrend(dates, sectors, spreadsheet, start, end):
@@ -42,6 +38,7 @@ def uptrend(dates, sectors, spreadsheet, start, end):
         
         # Cycle through all tickers in each sector
         for ticker in tickers:
+            print(ticker)
             # extract close data
             try:
                 stock = YahooFinancials(ticker)
@@ -50,7 +47,6 @@ def uptrend(dates, sectors, spreadsheet, start, end):
                 closes = [round(day['close'], 2) for day in prices]
             except:
                 print("Error")
-                # Call diagnostic/handling functions
                 continue
 
             # Calculate moving average
@@ -64,7 +60,9 @@ def uptrend(dates, sectors, spreadsheet, start, end):
             for i in range(30, len(ema["EMA"])):
                 if ema["EMA"].iloc[i] > ema["EMA"].iloc[i - 1]:
                     increasing_emas[i-30] += 1
-        
+                
+            break
+                    
         # convert to percentage
         for i in range(len(dates) - 30):
             increasing_emas[i] = increasing_emas[i] * 100 // len(tickers)
@@ -76,7 +74,8 @@ def uptrend(dates, sectors, spreadsheet, start, end):
     for sector in data:
         fig.add_trace(go.Scatter(x=dates, y=data[sector], name=sector))
 
-    fig.show()
+    fig_JSON = plotly.io.to_json(fig, pretty=True)
+    return fig_JSON
 
 
 def aggregate_percentage_growth(dates, sectors, spreadsheet, start, end):
@@ -87,6 +86,7 @@ def aggregate_percentage_growth(dates, sectors, spreadsheet, start, end):
         
         # Cycle through all tickers in each sector
         for ticker in tickers:
+            print(ticker)
             # extract close data
             try:
                 stock = YahooFinancials(ticker)
@@ -129,6 +129,7 @@ def price_growth(dates, sectors, spreadsheet, start, end):
         
         # Cycle through all tickers in each sector
         for ticker in tickers:
+            print(ticker)
             # extract close data
             try:
                 stock = YahooFinancials(ticker)
@@ -160,15 +161,10 @@ def price_growth(dates, sectors, spreadsheet, start, end):
     for sector in data:
         fig.add_trace(go.Scatter(x=dates, y=data[sector], name=sector))
 
-    fig.show()
+    fig_JSON = plotly.io.to_json(fig, pretty=True)
+    return fig_JSON
 
-
-def visualize_chart():
-    pass
 
 def clean_database():
     pass
-
-
-# update_indicators()
 

@@ -119,7 +119,7 @@ export default function Blog(){
 										{post.Category}
 									</Link>
 								</div>
-            					<div className={`h-full rounded-xl shadow-cla-blue bg-gradient-to-r from-indigo-50 to-[#9BE9D8] overflow-hidden`}>
+            					<div className={`h-full rounded-xl overflow-hidden`}>
 									<img
 										className="lg:h-60 md:h-36 w-full object-cover object-center scale-110 transition-all duration-400 hover:scale-100"
 										src={post.ImageURL}

@@ -6,7 +6,7 @@ export default function Records(){
     return(
         <div className='bg-white pt-24 sm:py-32'>
             <div className='mx-auto max-w-7xl px-6 lg:px-8'>
-                <h2 className="mb-4 text-center leading-8 text-cadet-gray text-2xl font-bold tracking-tight sm:text-4xl">
+                <h2 className="mb-6 text-center leading-8 text-cadet-gray tracking-tight text-3xl font-bold sm:text-4xl">
                         Trading Records
                 </h2>
             <Accordion collapseAll>
@@ -131,7 +131,7 @@ export default function Records(){
                             </table>
                         </div>
                     </div>
-                    <p className="mb-2 text-gray-500 dark:text-gray-400">
+                    <p className="mb-2 text-gray-500 tracking-tight dark:text-gray-400">
                         Active Management Fund
                     </p>
                     <div className="md:px-32 py-8 w-full">

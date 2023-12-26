@@ -90,5 +90,5 @@ def remove_invalid_tickers(tickers):
     df.to_excel("test.xlsx", sheet_name="Stocks", index=False)
 
             
-# print(verify_tickers())
-remove_invalid_tickers(["AAPL"])
+print(verify_tickers())
+# remove_invalid_tickers(["AAPL"])
