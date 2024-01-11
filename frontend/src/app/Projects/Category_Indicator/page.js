@@ -3,40 +3,51 @@
 import dynamic from "next/dynamic";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-export default function Category_Indicator(props) {
+export default function Category_Indicator() {
     const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
-    console.log(props);
-    
     const [startDate, setStartDate] = useState('2023-10-01');
     const [endDate, setEndDate] = useState('2023-12-25');
     const [version, setVersion] = useState('Uptrend');
     const [plot, setPlot] = useState("");
 
 
-    useEffect(() => {
-        axios.post('http://localhost:3001/retrieve_dates', {
-            start: startDate,
-            end: endDate,
-            version: version,
-        })
-            .then(
+    const { isLoading, error, data, refetch } = useQuery({
+        queryKey: ['Retrieve_Dates'],
+        queryFn: () =>
+            axios.post("http://localhost:3001/retrieve_dates", {
+                start: startDate,
+                end: endDate,
+                version: version,
+            }).then(
                 response => {
                     setPlot(response.data);
                 }
-            )
-    }, []);
+            ),
+    })
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add your form submission logic here
+        // usequery and update
+        refetch();
     };
 
+    const handleStartChange = (e) => {
+        e.preventDefault();
+        setStartDate(e.target.value)
+    };
 
-    const handleSelectChange = (e) => {
-        setVersion(e.target.value);
+    const handleEndChange = (e) => {
+        e.preventDefault();
+        setEndDate(e.target.value)
+    };
+
+    const handleVersionChange = (e) => {
+        e.preventDefault();
+        setVersion(e.target.value)
     };
 
 
@@ -62,8 +73,8 @@ export default function Category_Indicator(props) {
 
             <div className="mt-12 mx-auto max-w-7xl px-6 lg:px-8">
                 <div>
-                    <form className="flex items-center" onSubmit={handleSubmit}>
-                        <div className="mr-4">
+                    <form className="sm:flex sm:flex-wrap justify-center" onSubmit={handleSubmit}>
+                        <div className="mb-4 sm:mr-6">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="startDate">
                                 Start Date:
                             </label>
@@ -72,10 +83,10 @@ export default function Category_Indicator(props) {
                                 id="startDate"
                                 className="appearance-none border rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
                                 value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
+                                onChange={handleStartChange}
                             />
                         </div>
-                        <div className="mr-4">
+                        <div className="mb-4 sm:mr-6">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="endDate">
                                 End Date:
                             </label>
@@ -84,18 +95,18 @@ export default function Category_Indicator(props) {
                                 id="endDate"
                                 className="appearance-none border rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
                                 value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
+                                onChange={handleEndChange}
                             />
                         </div>
-                        <div className="mr-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="endDate">
+                        <div className="mb-4 sm:mr-6">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="version">
                                 Version:
                             </label>
                             <select
-                                id="dropdown"
+                                id="version"
                                 className="appearance-none border rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
                                 value={version}
-                                onChange={handleSelectChange}
+                                onChange={handleVersionChange}
                             >
                                 <option value="Uptrend">Uptrend</option>
                                 <option value="Growth">Price Growth</option>
@@ -104,19 +115,36 @@ export default function Category_Indicator(props) {
                         </div>
                         <button
                             type="submit"
-                            className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            className="mt-6 mb-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded sm:inline-flex sm:items-center"
                         >
                             Submit
                         </button>
+
                     </form>
+
+
                 </div>
 
 
-                <Plot className="mt-12 h-[70vh]" data={plot.data} layout={plot.layout} />
+                <div className="flex items-center justify-center overflow-auto">
+                <Plot
+  className="mt-12 h-[70vh]"
+  data={plot.data}
+  layout={{
+    ...plot.layout,
+    showlegend: false,
+    margin: { l: 0, r: 0, t: 0, b: 0 },
+  }}
+  config={{ displayModeBar: false }}
+/>
+       </div>
 
-                <h1 className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center'>How It Works</h1>
-                <p className="mt-4 text-lg">The Category Indicator is a sector comparison tool that identifies strong and weak areas of the markets by aggregating stock performances within each sector.</p>
-                <p className="mt-4 text-lg">The Uptrend version uses the presence of stock uptrends to determine sector strength.</p>
+                <h1 className='mt-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center'>How It Works</h1>
+                <p className="mt-6 text-lg">The Category Indicator is a sector comparison tool that identifies strong and weak areas of the markets by
+                    aggregating stock performances within each sector. Over 1400 stocks are analyzed.</p>
+                <p className="mt-2 text-lg">The Uptrend version uses the presence of stock uptrends to determine sector strength.</p>
+                <p className="mt-2 text-lg">The Price Growth version uses the presence of price increases to determine sector strength.</p>
+                <p className="mt-2 text-lg">The Price Growth Magnitude version uses volatility in price changes to determine sector strength.</p>
 
             </div>
         </div>
