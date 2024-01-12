@@ -127,17 +127,17 @@ export default function Category_Indicator() {
 
 
                 <div className="flex items-center justify-center overflow-auto">
-                <Plot
-  className="mt-12 h-[70vh]"
-  data={plot.data}
-  layout={{
-    ...plot.layout,
-    showlegend: false,
-    margin: { l: 0, r: 0, t: 0, b: 0 },
-  }}
-  config={{ displayModeBar: false }}
-/>
-       </div>
+                    <Plot
+                        className="mt-12 h-[70vh]"
+                        data={plot.data}
+                        layout={{
+                            ...plot.layout,
+                            showlegend: false,
+                            margin: { l: 0, r: 0, t: 0, b: 0 },
+                        }}
+                        config={{ displayModeBar: false }}
+                    />
+                </div>
 
                 <h1 className='mt-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center'>How It Works</h1>
                 <p className="mt-6 text-lg">The Category Indicator is a sector comparison tool that identifies strong and weak areas of the markets by
