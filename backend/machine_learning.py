@@ -6,49 +6,60 @@ import numpy as np
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-
-import tensorflow as tf
+import lstm
 
 
 def get_data(ticker : str) -> pd.DataFrame:
-    stock = YahooFinancials(ticker)
 
-    start = str(datetime.date.today() - datetime.timedelta(days=200))
-    end = str(datetime.date.today() - datetime.timedelta(days=0))
+    start = "2000-01-01"
+    end = "2024-01-15"
+    time_frame = "daily"
 
-    historical_closes = stock.get_historical_price_data(start, end, "daily")
-    prices = historical_closes[ticker]['prices']
+    stock = YahooFinancials(ticker).get_historical_price_data(start, end, time_frame)
+    data = stock[ticker]['prices']
 
-    closes = [round(day['close'], 2) for day in prices]     
-    highs = [round(day['high'], 2) for day in prices]     
-    lows = [round(day['low'], 2) for day in prices]   
-    volume = [day['volume'] for day in prices]
-    
-    # Pandas dataframe overlays indicators 
-    df = pd.DataFrame()
-    df['Highs'] = highs
-    df['Lows'] = lows
-    df['Closes'] = closes
-    df['Volume'] = volume
+    dates = [days['formatted_date'] for days in data]
+    closes = [round(day['close'], 2) for day in data]
+    low = [round(day['low'], 2) for day in data]
+    high = [round(day['high'], 2) for day in data]
+    volume = [round(day['volume'], 2) for day in data]
 
-    # EMAs - Exclude or modify
-    df['EMA_20'] = round(df['Closes'].ewm(span=20).mean(), 2)
-    df['EMA_50'] = round(df['Closes'].ewm(span=50).mean(), 2)
-    df['EMA_200'] = round(df['Closes'].ewm(span=200).mean(), 2)
+    data = {'Date': dates, 'Close': closes, 'Low': low, 'High': high, 'Volume': volume}
+    df = pd.DataFrame(data)
+
+    # EMAs
+    df['EMA_20'] = round(df['Close'].ewm(span=20).mean(), 2)
+    df['EMA_50'] = round(df['Close'].ewm(span=50).mean(), 2)
 
     # MACD
-    df['EMA_12'] = df['Closes'].ewm(span=12).mean()
-    df['EMA_26'] = df['Closes'].ewm(span=26).mean()
+    df['EMA_12'] = df['Close'].ewm(span=12).mean()
+    df['EMA_26'] = df['Close'].ewm(span=26).mean()
+
     df['MACD'] = round(df['EMA_12'] - df['EMA_26'], 2)
     df['MACD_Signal'] = round(df['MACD'].ewm(span=9).mean(), 2)
-    df['MACD_Histogram'] = round(df['MACD'] - df['MACD_Signal'], 2)
+
+    df.drop(['EMA_12'], axis=1, inplace=True)
+    df.drop(['EMA_26'], axis=1, inplace=True)
 
     # Stochastics
-    df['Stochastics_14_High'] = df['Highs'].rolling(14).max()
-    df['Stochastics_14_Low'] = df['Lows'].rolling(14).min()
-    df['Stochastics_Fast_K'] = (df['Closes'] - df['Stochastics_14_Low']) * 100 / (df['Stochastics_14_High'] - df['Stochastics_14_Low'])
+    df['Stochastics_14_High'] = df['High'].rolling(14).max()
+    df['Stochastics_14_Low'] = df['Low'].rolling(14).min()
+    df['Stochastics_Fast_K'] = (df['Close'] - df['Stochastics_14_Low']) * 100 / (df['Stochastics_14_High'] - df['Stochastics_14_Low'])
+
     df['Stochastics_K'] = round(df['Stochastics_Fast_K'].rolling(3).mean(), 2)
     df['Stochastics_D'] = round(df['Stochastics_K'].rolling(3).mean(), 2)
+
+    df.drop(['Stochastics_14_High'], axis=1, inplace=True)
+    df.drop(['Stochastics_14_Low'], axis=1, inplace=True)
+    df.drop(['Stochastics_Fast_K'], axis=1, inplace=True)
+
+    # Create dummy row for current day- will not be factored in lookback period
+    new_row = pd.Series([0] * len(df.columns), index=df.columns)
+
+    # Append the new row to the DataFrame
+    df = df.append(new_row, ignore_index=True)
+
+    """
 
     # Force Index
     df['Forces'] = (df['Closes'] - df['Closes'].shift()) * df['Volume']
@@ -62,8 +73,7 @@ def get_data(ticker : str) -> pd.DataFrame:
     df['True_Range'] = np.max(ranges, axis=1)
     df['ATR'] = round(df['True_Range'].rolling(14).sum() / 14, 2)
 
-    # Offset Close- How to do time series?
-    df['Offset'] = df['Closes'].loc[0]
+    """
 
     return df
 
@@ -89,13 +99,47 @@ def trade_decision(df):
 def short_squeeze():
     pass
 
-def price_forecast():
+
+def price_forecast(ticker):
     pass
 
-def day_trading_bot():
-    pass
+
+def trading_bot(num_stocks, time_frame):
+    
+    spreadsheet = pd.read_excel("Considered_Stocks.xlsx", sheet_name="Stocks")
+
+    sectors = ["Information Technology", "Communication Services", "Consumer Discretionary",
+            "Consumer Staples", "Finance", "Healthcare", "Industrials", "Energy", "Real Estate"]
+    
+    picks = {}
+
+    for sector in sectors:
+        tickers = spreadsheet[sector].dropna()
+
+        for ticker in tickers:
+            print(ticker)
+            
+            df = get_data(ticker)
+
+            close = df['Close'].iloc[-2]
+            predicted = lstm.get_results(df)
+
+            percentage_change = (predicted - close) / close * 100
+
+            # if higher percentage, add to picks
+            if len(picks) < num_stocks:
+                picks[ticker] = percentage_change
+            else:
+                min_key = min(picks, key = picks.get)
+                if percentage_change > picks[min_key]:
+                    picks[ticker] = percentage_change
+                    picks.pop(min_key)
+
+    return picks
 
 
-df = get_data("AAPL")
-df.to_excel('output.xlsx', index=False) 
-trade_decision(df)
+#df = get_data("AAPL")
+#df.to_excel('output.xlsx', index=False) 
+#trade_decision(df)
+            
+print(trading_bot(25, "daily"))

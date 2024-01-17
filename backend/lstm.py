@@ -3,73 +3,13 @@ import torch.nn as nn
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from yahoofinancials import YahooFinancials
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from matplotlib import pyplot as plt
+from sklearn.metrics import mean_squared_error
 
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-
-start = "2020-01-01"
-end = "2024-01-10"
-
-test = YahooFinancials("SPY").get_historical_price_data(start, end, "daily")
-market_data = test["SPY"]['prices']
-
-dates = [days['formatted_date'] for days in market_data]
-closes = [round(day['close'], 2) for day in market_data]
-low = [round(day['low'], 2) for day in market_data]
-high = [round(day['high'], 2) for day in market_data]
-volume = [round(day['volume'], 2) for day in market_data]
-
-# Creating a DataFrame
-data = {'Date': dates, 'Close': closes, 'Low': low, 'High': high, 'Volume': volume}
-df = pd.DataFrame(data)
-
-# Optional: Convert 'Date' column to datetime type
-df['Date'] = pd.to_datetime(df['Date'])
-
-# Create lookback columns
-lookback_periods = [1, 2, 3, 4, 5]
-
-for period in lookback_periods:
-    df[f'Close_Lookback_{period}'] = df['Close'].shift(periods=period)
-    df[f'Low_Lookback_{period}'] = df['Low'].shift(periods=period)
-    df[f'High_Lookback_{period}'] = df['High'].shift(periods=period)
-    df[f'Volume_Lookback_{period}'] = df['Volume'].shift(periods=period)
-
-df.drop(['Date'], axis=1, inplace=True)
-
-df_as_np = df.to_numpy()
-
-scaler = MinMaxScaler(feature_range=(-1, 1))
-df_as_np = scaler.fit_transform(df_as_np)
-
-X = df_as_np[:, 4:]
-y = df_as_np[:, 0]
-
-X = np.flip(X, axis=1)
-
-split_index = int(len(X) * 0.95)
-
-X_train = X[:split_index]
-X_test = X[split_index:]
-
-y_train = y[:split_index]
-y_test = y[split_index:]
-
-lookback = 20
-X_train = X_train.reshape((-1, lookback, 1))
-X_test = X_test.reshape((-1, lookback, 1))
-
-y_train = y_train.reshape((-1, 1))
-y_test = y_test.reshape((-1, 1))
-
-X_train = torch.tensor(X_train.copy()).float()
-y_train = torch.tensor(y_train).float()
-X_test = torch.tensor(X_test.copy()).float()
-y_test = torch.tensor(y_test).float()
 
 
 class TimeSeriesDataset(Dataset):
@@ -82,20 +22,7 @@ class TimeSeriesDataset(Dataset):
 
     def __getitem__(self, i):
         return self.X[i], self.y[i]
-    
-train_dataset = TimeSeriesDataset(X_train, y_train)
-test_dataset = TimeSeriesDataset(X_test, y_test)
 
-
-batch_size = 16
-
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-
-for _, batch in enumerate(train_loader):
-    x_batch, y_batch = batch[0].to(device), batch[1].to(device)
-    print(x_batch.shape, y_batch.shape)
-    break
 
 class LSTM(nn.Module):
     def __init__(self, input_size, hidden_size, num_stacked_layers):
@@ -117,66 +44,195 @@ class LSTM(nn.Module):
         out = self.fc(out[:, -1, :])
         return out
 
-model = LSTM(1, 4, 1)
-model.to(device)
-print(model)
 
-learning_rate = 0.001
-num_epochs = 10
-loss_function = nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+def get_results(df):
 
-def train_one_epoch():
-    model.train(True)
-    print(f'Epoch: {epoch + 1}')
-    running_loss = 0.0
-    
-    for batch_index, batch in enumerate(train_loader):
+    # Create lookback columns
+    lookback = 30
+    features = 10
+
+    # List of columns to be added
+    lookback_columns = []
+
+    for period in range(1, lookback+1):
+        lookback_columns.append(df['Close'].shift(periods=period))
+        lookback_columns.append(df['Low'].shift(periods=period))
+        lookback_columns.append(df['High'].shift(periods=period))
+        lookback_columns.append(df['Volume'].shift(periods=period))
+        lookback_columns.append(df['EMA_20'].shift(periods=period))
+        lookback_columns.append(df['EMA_50'].shift(periods=period))
+        lookback_columns.append(df['MACD'].shift(periods=period))
+        lookback_columns.append(df['MACD_Signal'].shift(periods=period))
+        lookback_columns.append(df['Stochastics_K'].shift(periods=period))
+        lookback_columns.append(df['Stochastics_D'].shift(periods=period))
+
+    # Concatenate all columns at once
+    df_lookback = pd.concat(lookback_columns, axis=1)
+
+    # Rename the columns with appropriate names
+    column_names = [f'{col}_Lookback_{period}' for period in range(1, lookback+1) for col in df.columns[1:]]
+    df_lookback.columns = column_names
+
+    # Concatenate the original DataFrame with the new lookback DataFrame
+    df = pd.concat([df, df_lookback], axis=1)
+
+    columns_to_drop = ['Date', 'Low', 'High', 'Volume', 'EMA_20', 'EMA_50', 'MACD', 'MACD_Signal', 'Stochastics_K', 'Stochastics_D']
+    df.drop(columns=columns_to_drop, inplace=True)
+
+
+    df.dropna(inplace=True)
+
+    df.to_excel('test.xlsx', index=False) 
+
+
+    df_as_np = df.to_numpy()
+
+    scaler = MinMaxScaler(feature_range=(-1, 1))
+    df_as_np = scaler.fit_transform(df_as_np)
+
+    X = df_as_np[:, 1:]
+    y = df_as_np[:, 0]
+
+    X = np.flip(X, axis=1)
+
+    split_index = int(len(X) * 0.95)
+
+    X_train = X[:split_index]
+    X_test = X[split_index:]
+
+    y_train = y[:split_index]
+    y_test = y[split_index:]
+
+
+    X_train = X_train.reshape((-1, lookback, features))
+    X_test = X_test.reshape((-1, lookback, features))
+
+    y_train = y_train.reshape((-1, 1))
+    y_test = y_test.reshape((-1, 1))
+
+    X_train = torch.tensor(X_train.copy()).float()
+    y_train = torch.tensor(y_train).float()
+    X_test = torch.tensor(X_test.copy()).float()
+    y_test = torch.tensor(y_test).float()
+
+        
+    train_dataset = TimeSeriesDataset(X_train, y_train)
+    test_dataset = TimeSeriesDataset(X_test, y_test)
+
+
+    batch_size = 16
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+    for _, batch in enumerate(train_loader):
         x_batch, y_batch = batch[0].to(device), batch[1].to(device)
-        
-        output = model(x_batch)
-        loss = loss_function(output, y_batch)
-        running_loss += loss.item()
-        
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        print(x_batch.shape, y_batch.shape)
+        break
 
-        if batch_index % 100 == 99:  # print every 100 batches
-            avg_loss_across_batches = running_loss / 100
-            print('Batch {0}, Loss: {1:.3f}'.format(batch_index+1,
-                                                    avg_loss_across_batches))
-            running_loss = 0.0
-    print()
 
-def validate_one_epoch():
-    model.train(False)
-    running_loss = 0.0
-    
-    for batch_index, batch in enumerate(test_loader):
-        x_batch, y_batch = batch[0].to(device), batch[1].to(device)
+    model = LSTM(features, 4, 1)
+    model.to(device)
+    print(model)
+
+    learning_rate = 0.001
+    num_epochs = 30
+    loss_function = nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+    def train_one_epoch():
+        model.train(True)
+        print(f'Epoch: {epoch + 1}')
+        running_loss = 0.0
         
-        with torch.no_grad():
+        for batch_index, batch in enumerate(train_loader):
+            x_batch, y_batch = batch[0].to(device), batch[1].to(device)
+            
             output = model(x_batch)
             loss = loss_function(output, y_batch)
             running_loss += loss.item()
+            
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-    avg_loss_across_batches = running_loss / len(test_loader)
-    
-    print('Val Loss: {0:.3f}'.format(avg_loss_across_batches))
-    print('***************************************************')
-    print()
+            if batch_index % 100 == 99:  # print every 100 batches
+                avg_loss_across_batches = running_loss / 100
+                print('Batch {0}, Loss: {1:.3f}'.format(batch_index+1,
+                                                        avg_loss_across_batches))
+                running_loss = 0.0
+        print()
 
-for epoch in range(num_epochs):
-    train_one_epoch()
-    validate_one_epoch()
+    def validate_one_epoch():
+        model.train(False)
+        running_loss = 0.0
+        
+        for batch_index, batch in enumerate(test_loader):
+            x_batch, y_batch = batch[0].to(device), batch[1].to(device)
+            
+            with torch.no_grad():
+                output = model(x_batch)
+                loss = loss_function(output, y_batch)
+                running_loss += loss.item()
 
-with torch.no_grad():
-    predicted = model(X_train.to(device)).to('cpu').numpy()
+        avg_loss_across_batches = running_loss / len(test_loader)
+        
+        print('Val Loss: {0:.3f}'.format(avg_loss_across_batches))
+        print('***************************************************')
+        print()
 
-plt.plot(y_train, label='Actual Close')
-plt.plot(predicted, label='Predicted Close')
-plt.xlabel('Day')
-plt.ylabel('Close')
-plt.legend()
-plt.show()
+    for epoch in range(num_epochs):
+        train_one_epoch()
+        validate_one_epoch()
+
+    with torch.no_grad():
+        predicted = model(X_train.to(device)).to('cpu').numpy()
+
+    train_predictions = predicted.flatten()
+
+    dummies = np.zeros((X_train.shape[0], lookback*features+1))
+    dummies[:, 0] = train_predictions
+    dummies = scaler.inverse_transform(dummies)
+
+    train_predictions = dummies[:, 0]
+
+    dummies = np.zeros((X_train.shape[0], lookback*features+1))
+    dummies[:, 0] = y_train.flatten()
+    dummies = scaler.inverse_transform(dummies)
+
+    new_y_train = dummies[:, 0]
+
+    plt.plot(new_y_train, label='Actual Close')
+    plt.plot(train_predictions, label='Predicted Close')
+    plt.xlabel('Day')
+    plt.ylabel('Close')
+    plt.legend()
+    plt.show()
+
+    test_predictions = model(X_test.to(device)).detach().cpu().numpy().flatten()
+
+    dummies = np.zeros((X_test.shape[0], lookback*features+1))
+    dummies[:, 0] = test_predictions
+    dummies = scaler.inverse_transform(dummies)
+
+    test_predictions = dummies[:-1, 0]
+    predicted = dummies[-1:, 0]
+
+    dummies = np.zeros((X_test.shape[0], lookback*features+1))
+    dummies[:, 0] = y_test.flatten()
+    dummies = scaler.inverse_transform(dummies)
+
+    new_y_test = dummies[:-1, 0]
+
+    mse = mean_squared_error(new_y_test, test_predictions)
+
+    print('MSE between test_predictions and new_y_test:', mse)
+
+    plt.plot(new_y_test, label='Actual Close')
+    plt.plot(test_predictions, label='Predicted Close')
+    plt.xlabel('Day')
+    plt.ylabel('Close')
+    plt.legend()
+    plt.show()
+
+    return predicted[0]
