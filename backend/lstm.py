@@ -34,6 +34,7 @@ class LSTM(nn.Module):
                             batch_first=True)
         
         self.fc = nn.Linear(hidden_size, 1)
+        self.dropout = nn.Dropout(0.4)
 
     def forward(self, x):
         batch_size = x.size(0)
@@ -48,8 +49,8 @@ class LSTM(nn.Module):
 def get_results(df):
 
     # Create lookback columns
-    lookback = 30
-    features = 10
+    lookback = 15
+    features = 12
 
     # List of columns to be added
     lookback_columns = []
@@ -65,6 +66,9 @@ def get_results(df):
         lookback_columns.append(df['MACD_Signal'].shift(periods=period))
         lookback_columns.append(df['Stochastics_K'].shift(periods=period))
         lookback_columns.append(df['Stochastics_D'].shift(periods=period))
+        lookback_columns.append(df['Force_Index'].shift(periods=period))
+        lookback_columns.append(df['ATR'].shift(periods=period))
+
 
     # Concatenate all columns at once
     df_lookback = pd.concat(lookback_columns, axis=1)
@@ -76,13 +80,13 @@ def get_results(df):
     # Concatenate the original DataFrame with the new lookback DataFrame
     df = pd.concat([df, df_lookback], axis=1)
 
-    columns_to_drop = ['Date', 'Low', 'High', 'Volume', 'EMA_20', 'EMA_50', 'MACD', 'MACD_Signal', 'Stochastics_K', 'Stochastics_D']
+    columns_to_drop = ['Date', 'Low', 'High', 'Volume', 'EMA_20', 'EMA_50', 'MACD', 'MACD_Signal', 'Stochastics_K', 'Stochastics_D', 'Force_Index', 'ATR']
     df.drop(columns=columns_to_drop, inplace=True)
 
 
     df.dropna(inplace=True)
 
-    df.to_excel('test.xlsx', index=False) 
+    # df.to_excel('test.xlsx', index=False) 
 
 
     df_as_np = df.to_numpy()
@@ -95,7 +99,7 @@ def get_results(df):
 
     X = np.flip(X, axis=1)
 
-    split_index = int(len(X) * 0.95)
+    split_index = int(len(X) * .95)
 
     X_train = X[:split_index]
     X_test = X[split_index:]
@@ -120,29 +124,27 @@ def get_results(df):
     test_dataset = TimeSeriesDataset(X_test, y_test)
 
 
-    batch_size = 16
+    batch_size = 64
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
     for _, batch in enumerate(train_loader):
         x_batch, y_batch = batch[0].to(device), batch[1].to(device)
-        print(x_batch.shape, y_batch.shape)
         break
 
 
     model = LSTM(features, 4, 1)
     model.to(device)
-    print(model)
 
-    learning_rate = 0.001
+    learning_rate = 0.01
     num_epochs = 30
     loss_function = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     def train_one_epoch():
         model.train(True)
-        print(f'Epoch: {epoch + 1}')
+        # print(f'Epoch: {epoch + 1}')
         running_loss = 0.0
         
         for batch_index, batch in enumerate(train_loader):
@@ -156,12 +158,12 @@ def get_results(df):
             loss.backward()
             optimizer.step()
 
-            if batch_index % 100 == 99:  # print every 100 batches
-                avg_loss_across_batches = running_loss / 100
-                print('Batch {0}, Loss: {1:.3f}'.format(batch_index+1,
-                                                        avg_loss_across_batches))
-                running_loss = 0.0
-        print()
+            #if batch_index % 100 == 99:  # print every 100 batches
+                #avg_loss_across_batches = running_loss / 100
+                #print('Batch {0}, Loss: {1:.3f}'.format(batch_index+1,
+                #                                        avg_loss_across_batches))
+                #running_loss = 0.0
+        # print()
 
     def validate_one_epoch():
         model.train(False)
@@ -175,11 +177,11 @@ def get_results(df):
                 loss = loss_function(output, y_batch)
                 running_loss += loss.item()
 
-        avg_loss_across_batches = running_loss / len(test_loader)
+        # avg_loss_across_batches = running_loss / len(test_loader)
         
-        print('Val Loss: {0:.3f}'.format(avg_loss_across_batches))
-        print('***************************************************')
-        print()
+        #print('Val Loss: {0:.3f}'.format(avg_loss_across_batches))
+        #print('***************************************************')
+        #print()
 
     for epoch in range(num_epochs):
         train_one_epoch()
@@ -188,6 +190,7 @@ def get_results(df):
     with torch.no_grad():
         predicted = model(X_train.to(device)).to('cpu').numpy()
 
+    """
     train_predictions = predicted.flatten()
 
     dummies = np.zeros((X_train.shape[0], lookback*features+1))
@@ -199,15 +202,7 @@ def get_results(df):
     dummies = np.zeros((X_train.shape[0], lookback*features+1))
     dummies[:, 0] = y_train.flatten()
     dummies = scaler.inverse_transform(dummies)
-
-    new_y_train = dummies[:, 0]
-
-    plt.plot(new_y_train, label='Actual Close')
-    plt.plot(train_predictions, label='Predicted Close')
-    plt.xlabel('Day')
-    plt.ylabel('Close')
-    plt.legend()
-    plt.show()
+    """
 
     test_predictions = model(X_test.to(device)).detach().cpu().numpy().flatten()
 
@@ -216,7 +211,7 @@ def get_results(df):
     dummies = scaler.inverse_transform(dummies)
 
     test_predictions = dummies[:-1, 0]
-    predicted = dummies[-1:, 0]
+    predicted = dummies[-2:, 0]
 
     dummies = np.zeros((X_test.shape[0], lookback*features+1))
     dummies[:, 0] = y_test.flatten()
@@ -228,11 +223,13 @@ def get_results(df):
 
     print('MSE between test_predictions and new_y_test:', mse)
 
+    """
     plt.plot(new_y_test, label='Actual Close')
     plt.plot(test_predictions, label='Predicted Close')
     plt.xlabel('Day')
     plt.ylabel('Close')
     plt.legend()
     plt.show()
+    """
 
-    return predicted[0]
+    return predicted

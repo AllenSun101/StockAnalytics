@@ -1,5 +1,3 @@
-import datetime
-
 import pandas as pd
 from yahoofinancials import YahooFinancials
 import numpy as np
@@ -11,8 +9,8 @@ import lstm
 
 def get_data(ticker : str) -> pd.DataFrame:
 
-    start = "2000-01-01"
-    end = "2024-01-15"
+    start = "2020-01-01"
+    end = "2024-01-23"
     time_frame = "daily"
 
     stock = YahooFinancials(ticker).get_historical_price_data(start, end, time_frame)
@@ -38,9 +36,6 @@ def get_data(ticker : str) -> pd.DataFrame:
     df['MACD'] = round(df['EMA_12'] - df['EMA_26'], 2)
     df['MACD_Signal'] = round(df['MACD'].ewm(span=9).mean(), 2)
 
-    df.drop(['EMA_12'], axis=1, inplace=True)
-    df.drop(['EMA_26'], axis=1, inplace=True)
-
     # Stochastics
     df['Stochastics_14_High'] = df['High'].rolling(14).max()
     df['Stochastics_14_Low'] = df['Low'].rolling(14).min()
@@ -49,31 +44,26 @@ def get_data(ticker : str) -> pd.DataFrame:
     df['Stochastics_K'] = round(df['Stochastics_Fast_K'].rolling(3).mean(), 2)
     df['Stochastics_D'] = round(df['Stochastics_K'].rolling(3).mean(), 2)
 
-    df.drop(['Stochastics_14_High'], axis=1, inplace=True)
-    df.drop(['Stochastics_14_Low'], axis=1, inplace=True)
-    df.drop(['Stochastics_Fast_K'], axis=1, inplace=True)
-
-    # Create dummy row for current day- will not be factored in lookback period
-    new_row = pd.Series([0] * len(df.columns), index=df.columns)
-
-    # Append the new row to the DataFrame
-    df = df.append(new_row, ignore_index=True)
-
-    """
-
     # Force Index
-    df['Forces'] = (df['Closes'] - df['Closes'].shift()) * df['Volume']
+    df['Forces'] = (df['Close'] - df['Close'].shift()) * df['Volume']
     df['Force_Index'] = round(df['Forces'].ewm(span=13).mean(), 2)
 
     # Average True Range
-    df['Range'] = df['Highs'] - df['Lows']
-    df['High_Close'] = np.abs(df['Highs'] - df['Closes'].shift())
-    df['Low_Close'] = np.abs(df['Lows'] - df['Closes'].shift())
+    df['Range'] = df['High'] - df['Low']
+    df['High_Close'] = np.abs(df['High'] - df['Close'].shift())
+    df['Low_Close'] = np.abs(df['Low'] - df['Close'].shift())
     ranges = pd.concat([df['Range'], df['High_Close'], df['Low_Close']], axis=1)
     df['True_Range'] = np.max(ranges, axis=1)
     df['ATR'] = round(df['True_Range'].rolling(14).sum() / 14, 2)
 
-    """
+    columns_to_drop = ['EMA_12', 'EMA_26', 'Stochastics_14_High', 'Stochastics_14_Low', 'Stochastics_Fast_K', 'Forces', 'Range', 'High_Close', 'Low_Close', 'True_Range']
+    df.drop(columns=columns_to_drop, inplace=True)
+
+    # Create dummy row for current day- will not be factored in lookback period
+    new_row = pd.Series([0] * len(df.columns), index=df.columns)
+
+    # Concatenate the new row to the DataFrame
+    df = pd.concat([df, new_row.to_frame().transpose()], ignore_index=True)
 
     return df
 
@@ -101,12 +91,14 @@ def short_squeeze():
 
 
 def price_forecast(ticker):
-    pass
+    df = get_data(ticker)
+    predicted = lstm.get_results(df)
+    return predicted
 
 
-def trading_bot(num_stocks, time_frame):
+def trading_bot(num_stocks):
     
-    spreadsheet = pd.read_excel("Considered_Stocks.xlsx", sheet_name="Stocks")
+    spreadsheet = pd.read_excel("Condensed_Watchlist.xlsx", sheet_name="Stocks")
 
     sectors = ["Information Technology", "Communication Services", "Consumer Discretionary",
             "Consumer Staples", "Finance", "Healthcare", "Industrials", "Energy", "Real Estate"]
@@ -122,9 +114,12 @@ def trading_bot(num_stocks, time_frame):
             df = get_data(ticker)
 
             close = df['Close'].iloc[-2]
-            predicted = lstm.get_results(df)
 
-            percentage_change = (predicted - close) / close * 100
+            predicted = lstm.get_results(df)
+            prev_predicted = predicted[0]
+            current_predicted = predicted[1]
+
+            percentage_change = ((current_predicted - close) + (current_predicted - prev_predicted))/ close * 100
 
             # if higher percentage, add to picks
             if len(picks) < num_stocks:
@@ -142,4 +137,4 @@ def trading_bot(num_stocks, time_frame):
 #df.to_excel('output.xlsx', index=False) 
 #trade_decision(df)
             
-print(trading_bot(25, "daily"))
+print(trading_bot(20))
