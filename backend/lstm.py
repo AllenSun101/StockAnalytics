@@ -221,7 +221,7 @@ def get_results(df):
 
     mse = mean_squared_error(new_y_test, test_predictions)
 
-    print('MSE between test_predictions and new_y_test:', mse)
+    # print('MSE between test_predictions and new_y_test:', mse)
 
     """
     plt.plot(new_y_test, label='Actual Close')

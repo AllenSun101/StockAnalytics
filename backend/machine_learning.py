@@ -6,11 +6,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import lstm
 
+from datetime import date
+
 
 def get_data(ticker : str) -> pd.DataFrame:
 
     start = "2020-01-01"
-    end = "2024-01-23"
+    end = str(date.today())
     time_frame = "daily"
 
     stock = YahooFinancials(ticker).get_historical_price_data(start, end, time_frame)
@@ -115,19 +117,26 @@ def trading_bot(num_stocks):
 
             close = df['Close'].iloc[-2]
 
-            predicted = lstm.get_results(df)
-            prev_predicted = predicted[0]
-            current_predicted = predicted[1]
+            
+            sum_score = 0
+            runs = 3
+            for i in range(runs):
+                predicted = lstm.get_results(df)
+                prev_predicted = predicted[0]
+                current_predicted = predicted[1]
 
-            percentage_change = ((current_predicted - close) + (current_predicted - prev_predicted))/ close * 100
+                percentage_change = ((current_predicted - close) + (current_predicted - prev_predicted))/ close * 100
+                sum_score += percentage_change
 
+            avg_score = round(sum_score/runs, 2)
+            
             # if higher percentage, add to picks
             if len(picks) < num_stocks:
-                picks[ticker] = percentage_change
+                picks[ticker] = avg_score
             else:
                 min_key = min(picks, key = picks.get)
-                if percentage_change > picks[min_key]:
-                    picks[ticker] = percentage_change
+                if avg_score > picks[min_key]:
+                    picks[ticker] = avg_score
                     picks.pop(min_key)
 
     return picks
