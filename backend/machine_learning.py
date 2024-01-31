@@ -5,8 +5,10 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import lstm
+import yfinance as yf
 
-from datetime import date
+
+from datetime import date, datetime
 
 
 def get_data(ticker : str) -> pd.DataFrame:
@@ -70,6 +72,29 @@ def get_data(ticker : str) -> pd.DataFrame:
     return df
 
 
+def earnings(ticker): 
+    earnings_dates = yf.Ticker(ticker).earnings_dates.index.unique().tolist()
+    df = pd.DataFrame({'timestamp': earnings_dates})
+
+    df['year'] = df['timestamp'].dt.year
+    df['month'] = df['timestamp'].dt.month
+    df['day'] = df['timestamp'].dt.day
+    df['hour'] = df['timestamp'].dt.hour
+
+    today_date = datetime.now().date()
+    # Check for same day morning or previous day afternoon
+    df['is_today'] = (df['timestamp'].dt.year == today_date.year) & \
+                 (df['timestamp'].dt.month == today_date.month) & \
+                 (df['timestamp'].dt.day == today_date.day) & \
+                  (df['timestamp'].dt.hour < 12) 
+    df['is_today'] = df['is_today'] | (df['timestamp'].dt.year == today_date.year) & \
+                 (df['timestamp'].dt.month == today_date.month) & \
+                 (df['timestamp'].dt.day == today_date.day - 1) & \
+                  (df['timestamp'].dt.hour > 12)
+
+    return any(df['is_today'])
+
+
 def trade_decision(df):
     # Result- price up enough or not (closes-changes)
     # range, volume, MACD, Stochastics, Exponential Moving Averages (changes)
@@ -113,10 +138,12 @@ def trading_bot(num_stocks):
         for ticker in tickers:
             print(ticker)
             
+            if earnings(ticker):
+                continue
+
             df = get_data(ticker)
 
             close = df['Close'].iloc[-2]
-
             
             sum_score = 0
             runs = 3
